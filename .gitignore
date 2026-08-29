@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Large model files (Keras checkpoints)
+models/deep_learning/*.keras
+
+# Large data files — raw and processed CSVs/XLSX
+data/raw/raw_train.csv
+data/raw/translated_train.xlsx
+data/processed/processed_dataset.csv
+
+# Large prediction files
+results/ngram_evaluation/predictions/
+results/audit/leakage_report.csv
+results/dl_predictions.csv
+results/predictions/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# OneDrive temp files
+*.tmp
+~$*
+
+# Virtual env
+venv/
+.env/
+env/

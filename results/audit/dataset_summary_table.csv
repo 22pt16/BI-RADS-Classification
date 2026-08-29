@@ -1,0 +1,8 @@
+metric,value
+n_reports,9179.0
+n_classes,7.0
+avg_word_count,53.91033881686458
+median_word_count,49.0
+min_word_count,20.0
+max_word_count,234.0
+avg_char_count,444.8859352870683

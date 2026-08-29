@@ -1,0 +1,1033 @@
+ID,target,report,word_count,char_count
+Acc1202,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Partially liposubstituted breasts.
+
+Radiopaque marker in skin lesion on the left breast.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> exam, no significant changes were observed.",44,364
+Acc19673,3,"Clinical indication:
+
+Tracking.
+
+ Reduction mammoplasty in <REDACTED>.
+
+Findings:
+
+Heterogeneously dense breasts, which may hide small nodules.
+
+Oval and circumscribed nodule located at the junction of the upper quadrants of the left breast, which on targeted ultrasound performed on <DATE> corresponded to a solid, oval and circumscribed nodule, measuring 2.1 cm.
+
+Architectural change resulting from surgical manipulation.
+
+Benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+In relation to the <DATE> examination, stability of the nodule in the left breast is noted.
+
+",90,677
+Acc22738,2,"Clinical indication:
+
+tracking.
+
+Findings:
+
+Heterogeneously dense breasts, which may hide small nodules.
+
+Sparse benign calcifications.
+
+No suspicious calcifications were observed.
+
+Intramammary lymph node on the left.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",43,362
+Acc16683,2,"Clinical indication:
+
+tracking.
+
+Findings:
+
+Breasts with sparse fibroglandular densities.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+Normal-looking axillary lymph nodes.
+
+Comparative analysis:
+
+Regarding the mammography exam on the day <DATE>, no significant changes were observed.
+
+",37,325
+Acc3897,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Partially liposubstituted breasts.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> examination, no significant changes were observed.
+
+Previous mammograms not available for comparative analysis.
+
+",42,380
+Acc4222,2,"Clinical indication:
+
+tracking.
+
+Findings:
+
+Partially fat-replaced breasts, with heterogeneous remaining tissue.
+
+Focal asymmetry described in the superolateral quadrant of the right breast, which, after a study with selective compression, shows an oval nodular image measuring approximately 3.0 x 2.5 cm, stable in 32 months.
+
+Sparse benign calcifications.
+
+No grouped pleomorphic microcalcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATA> examination (rescued from our archives), no significant changes were observed.
+
+",76,600
+Acc10783,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Breasts with sparse fibroglandular densities.
+
+Sparse benign calcifications.
+
+No suspicious calcifications were observed.
+
+Intramammary lymph node on the left.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.",40,346
+Acc13235,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Heterogeneously dense breasts, which may hide small nodules.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+ Minimal amount of fibroglandular tissue in the left axillary extension.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",48,407
+Acc6467,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Dense breasts due to the predominance of fibroglandular tissue, which reduces the sensitivity of mammography.
+
+No suspicious grouped calcifications were observed.
+
+Sparse benign calcifications.
+
+Oval nodule with obscured margins due to tissue overlap, located in the retroareolar region of the left breast, measuring approximately 4.0 cm, which corresponds to a simple cyst on the ultrasound of <DATE>.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",78,591
+Acc7101,0,"Clinical indication:
+
+ Control of grouped calcifications in the right breast.
+
+Findings:
+
+Partially fat-replaced breasts with remnants of dense and heterogeneous fibroglandular tissue.
+
+Calcifications grouped in the superolateral quadrant of the right breast.
+
+Sparse benign calcifications, including vascular ones.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> examination, no significant changes were observed.
+
+",57,471
+Acc5979,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Dense breasts due to the predominance of fibroglandular tissue, which reduces the sensitivity of mammography.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+First mammogramOpinion:
+
+Benign mammographic findings.
+
+Through the BI-RADS® report standardization system:
+
+ Category 2.
+
+Recommendation:
+
+In the absence of clinical findings, consider routine control according to age group.",65,546
+Acc8436,2,"Clinical indication:
+
+tracking.
+
+Findings:
+
+Heterogeneously dense breasts, which may hide small nodules.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",38,332
+Acc12212,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Breasts with sparse fibroglandular densities.
+
+Intramammary lymph node on the left.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+First mammographic exam.
+
+",37,321
+Acc5139,0,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Partially fat-replaced breasts, with dense and heterogeneous remaining fibroglandular tissue.
+
+Focal asymmetry located in the superolateral quadrant of the left breast, which remained after localized compression.
+
+ Sparse benign calcifications.
+
+ No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",56,487
+Acc21067,2,"Clinical indication:
+
+ trackingFindings:
+
+Breasts with sparse fibroglandular densities.
+
+Multiple circumscribed and bilateral nodules, which on the complementary ultrasound performed on <DATE>, corresponded to simple cysts.
+
+No suspicious grouped calcifications were observed.
+
+Sparse benign calcifications.
+
+ The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> exam, no changes were observed.
+
+",52,445
+Acc22664,2,"Clinical indication:
+
+trackingFindings:
+
+Breasts with sparse fibroglandular densities.
+
+No suspicious grouped calcifications were observed.
+
+Sparse benign calcifications.
+
+Oily cyst in the superolateral quadrant of the right breast.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> examination, no significant changes were observed.
+
+",46,388
+Acc2491,0,"Clinical indication:
+
+ trackingFindings:
+
+Partially liposubstituted breasts.
+
+No suspicious grouped calcifications were observed.
+
+Sparse benign calcifications.
+
+ Focal asymmetry located in the superolateral quadrant of the left breast.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.",43,378
+Acc13548,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Heterogeneously dense breasts, which may hide small nodules.
+
+Oval, circumscribed, low-density nodule, measuring approximately 1.8cm, located at the junction of the medial quadrants in the left breast, stable in relation to the previous <DATE> examination.
+
+Heterogeneous gross calcifications located in the superolateral quadrant of the left breast, measuring approximately 3 mm together.
+
+ Complementary evaluation was carried out with magnification, and histopathological study (exam and procedure carried out in an external service on the date <DATE>, with images and reports attached), with a benign and concordant result.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> examination, no significant changes were observed (report from our archives).
+
+",122,939
+Acc17339,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Extremely dense breasts, which reduces the sensitivity of mammography.
+
+ Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> examination (report only), no significant changes were observed.
+
+",43,370
+Acc7862,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Predominantly adipose breasts.
+
+Sparse benign calcifications.
+
+No suspicious calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> examination (recovered from our system, only craniocaudal views), no significant changes were observed.
+
+",41,360
+Acc13436,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Breasts with sparse fibroglandular densities.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+Axillary lymph nodes in the right breast, with a normal appearance.
+
+Comparative analysis:
+
+Regarding the <DATE> examination, no significant changes were observed.
+
+",40,341
+Acc14091,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Heterogeneously dense breasts, which may hide small nodules.
+
+Radiopaque skin marker on the right.
+
+Oval, circumscribed, bilateral nodules located:
+
+- QSL of the left breast, measuring 1.0 cm, stable.
+
+- IMQ of the left breast, periareolar, measuring 1.2 cm, stable.
+
+- QSL of the right breast measuring 0.8 cm, stable.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> examination, stability of the bilateral nodules was observed (in the retrospective evaluation).
+
+",88,649
+Acc8424,3,"Clinical indication:
+
+ screening/positive family history (aunt).
+
+Findings:
+
+Heterogeneously dense breasts, which may hide small nodules.
+
+Punctate and round calcifications, grouped in the periareolar region/superolateral quadrant of the left breast, 1.5 cm from the papilla, stable for 2 years and 4 months.
+
+Sparse benign calcifications.
+
+ The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> examination, no significant changes were observed.
+
+",63,496
+Acc1464,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Radiopaque marker on skin lesion on the right breast.
+
+Partially liposubstituted breasts.
+
+Sparse benign calcifications.
+
+No grouped pleomorphic microcalcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",42,368
+Acc18521,2,"Clinical indication:
+
+ tracking.
+
+ Breast implants included in <DATE>.
+
+Findings:
+
+Breasts with sparse fibroglandular densities.
+
+Retroglandular breast implants, with regular contours, without signs of previous extracapsular rupture.
+
+ Eklund's maneuver (posterior displacement of the prosthesis) was performed to better visualize the fibroglandular tissue.
+
+Change in the usual architecture, resulting from surgical manipulation.
+
+Sparse benign calcifications.
+
+No suspicious calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+First mammogram.
+
+",70,607
+Acc20003,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Heterogeneously dense breasts, which may hide small nodules.
+
+Bilateral obscured nodules, the largest in the retroareolar region of the right breast, measuring 3.4 cm, corresponding to cysts on targeted ultrasound, performed on <DATE>.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",63,508
+Acc15600,2,"Clinical indication:
+
+ trackingFindings:
+
+Breasts with sparse fibroglandular densities.
+
+No suspicious grouped calcifications were observed.
+
+Sparse benign calcifications.
+
+ Intramammary lymph node in the right breastThe axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",40,359
+Acc19190,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Nodule projected in the lower quadrants of the right breast that corresponds to the skin lesion (mentioned in the questionnaire).
+
+Breasts with sparse fibroglandular densities.
+
+Sparse benign calcifications.
+
+No suspicious calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",54,441
+Acc5822,2,"Clinical indication:
+
+Tracking.
+
+Findings:
+
+Partially liposubstituted breasts.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+Intramammary lymph node on the left.
+
+Small amount of fibroglandular tissue in the axillary processes.
+
+Normal-looking axillary lymph nodes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",44,390
+Acc11849,4,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Breasts with sparse fibroglandular densities.
+
+Focal asymmetry associated with architectural distortion.
+
+ measuring approximately 4.2 cm in the superolateral quadrant of the right breast, with heterogeneous coarse calcifications grouped in between.
+
+,Intramammary lymph node in the right breast.
+
+Sparse benign calcifications.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",61,516
+Acc19408,3,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Heterogeneously dense breasts, which may hide small nodules.
+
+Regional punctate calcifications in the superolateral quadrant of the left breast.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Comparative study with <DATE> mammography (external examination), calcifications became more evident.
+
+",44,375
+Acc5733,2,"Clinical indication:
+
+Tracking.
+
+Positive family history (sister).
+
+Findings:
+
+Partially liposubstituted breasts.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+Intramammary lymph node on the left.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> examination, no significant changes were observed.
+
+",45,391
+Acc14393,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Sparse fibroglandular breasts.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+Normal-looking axillary lymph nodes.
+
+Comparative analysis:
+
+Regarding the <DATE> exam (report only) no significant changes.
+
+",31,287
+Acc4823,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Partially liposubstituted breasts.
+
+Sparse benign calcifications.
+
+Bilateral intramammary lymph nodes, stable.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> examination, no significant changes were observed.
+
+",40,364
+Acc3953,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Partially liposubstituted breasts.
+
+Change in the usual architecture, resulting from surgical manipulation.
+
+Bilateral oil cysts.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",45,402
+Acc11572,3,"Clinical indication:
+
+ trackingFindings:
+
+Heterogeneously dense breasts, which may hide small nodules.
+
+Circumscribed nodule located in the superolateral quadrants of the right breast, which on complementary ultrasound demonstrated a solid nodule measuring 1.0 x 0.8 cm.
+
+Intramammary lymph node on the left.
+
+No suspicious grouped calcifications were observed.
+
+Sparse benign calcifications.
+
+ The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",67,537
+Acc16093,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Heterogeneously dense breasts, which may hide small nodules.
+
+Diffusely distributed calcifications in both breasts, some forming groups, with intracystic calcifications, more evident on the left, stable since <DATE>.
+
+Bilateral intramammary lymph nodes.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> examination, no significant changes were observed.
+
+",61,507
+Acc4711,3,"Clinical indication:
+
+control of focal asymmetry of the left breast.
+
+Findings:
+
+Partially liposubstituted breasts.
+
+Focal asymmetry located in the superolateral quadrant of the left breast, stable since the <DATE> examination.
+
+Sparse benign calcifications.
+
+ No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+In relation to the <DATE> examination, no significant changes were observed.
+
+",60,473
+Acc550,2,"Clinical indication:
+
+ reassessment of changes observed on mammography of <DATE>.
+
+Magnified views were performed with compression located on the left breast.
+
+Findings:
+
+Metallic marker on the scar on the left breast.
+
+Focal asymmetry located in the superolateral quadrant of the left breast, which, after a study with selective compression, does not show any nodule or architectural distortion, and can be characterized as an area of ​​residual fibroglandular tissue.
+
+",68,471
+Acc10142,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Heterogeneously dense breasts, which may hide small nodules.
+
+Focal asymmetry in the middle third of the superolateral quadrant of the right breast, which, according to complementary ultrasound and tomosynthesis performed on <DATE>, corresponds to fibroglandular tissue with small cysts in between, measuring up to 3 mm.
+
+Sparse benign calcifications.
+
+No suspicious calcifications were observed.
+
+Bilateral intramammary lymph nodes.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",79,622
+Acc12605,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Breasts with sparse fibroglandular densities.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+Bilateral intramammary lymph nodes.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> examination (report only), no significant changes were observed.
+
+",43,381
+Acc21887,0,"Clinical indication:
+
+tracking.
+
+Exam description:
+
+Heterogeneously dense breasts, which may hide small nodules.
+
+Coarse and heterogeneous calcifications grouped in the superolateral quadrant of the right breast.
+
+Sparse benign calcifications.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",46,387
+Acc3857,3,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Partially liposubstituted breasts.
+
+Focal asymmetry located in the inferomedial quadrant of the right breast, which persists after compression, retrospectively stable.
+
+Focal asymmetry in the retroareolar region of the right breast, which does not constitute a nodule or architectural distortion after localized compression, suggesting residual fibroglandular tissue.
+
+Sparse benign calcifications.
+
+ No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> and <DATE> exams, no significant differences were observed.",80,660
+Acc628,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Radiopaque marker in nevus in the right breast.
+
+Partially liposubstituted breasts.
+
+Sparse benign calcifications.
+
+No grouped pleomorphic microcalcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> examination, no significant changes were observed.
+
+",43,374
+Acc2217,2,"Clinical indication:
+
+ first exam.
+
+Findings:
+
+Partially liposubstituted breasts.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+",25,225
+Acc20197,2,"Clinical indication:
+
+tracking.
+
+ Reports biopsy on the right breast on <DATE> (result not available).
+
+Findings:
+
+Heterogeneously dense breasts, which may hide small nodules.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",49,403
+Acc7343,4,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Breasts with sparse fibroglandular densities.
+
+Grouped fine pleomorphic calcifications located in the middle third of the superolateral quadrant of the left breast.
+
+Sparse benign calcifications.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> examination, grouped calcifications stand out.
+
+",47,392
+Acc19668,2,"Clinical indication:
+
+tracking.
+
+Findings:
+
+Heterogeneously dense breasts, which may hide small nodules.
+
+Sparse benign calcifications.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Regarding the <DATE> exam, no significant changes were observed.
+
+",40,337
+Acc17387,2,"Clinical indication:
+
+tracking.
+
+Findings:
+
+Breasts with sparse fibroglandular densities.
+
+Sparse benign calcifications, some in vascular paths.
+
+No suspicious grouped calcifications were observed.
+
+Usual intramammary lymph nodes in the bilateral superolateral quadrant.
+
+The axillary regions do not present significant changes.
+
+Comparative analysis:
+
+Previous mammograms not available for comparative analysis.
+
+",48,414
+Acc6773,2,"Clinical indication:
+
+ tracking.
+
+Findings:
+
+Partially liposubstituted breasts.
+
+Sparse benign calcifications, some vascular.
+
+No suspicious grouped calcifications were observed.
+
+The axillary regions do not present significant changes.
+
+Fibroglandular tissue in the axillary processes.
+
+Comparative analysis:
+
+Regarding the <DATA> examination (images retrieved from our archives), no significant changes were observed.
+
+",48,421

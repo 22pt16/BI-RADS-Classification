@@ -1,0 +1,2 @@
+best_feature_type,best_model,validation_macro_f1,test_accuracy,test_macro_f1,test_weighted_f1,macro_roc_auc,weighted_roc_auc
+tfidf,linear_svm,0.7375435605867764,0.896877269426289,0.6955966240997188,0.8998565830051084,0.9783172080417714,0.9702662215901281

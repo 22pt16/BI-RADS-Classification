@@ -1,0 +1,281 @@
+class,feature,coefficient,direction
+0,breast sparse,1.9775650933797755,positive
+0,cm the,1.9439635766257937,positive
+0,obscured,1.881258463631677,positive
+0,focal,1.7381556827455116,positive
+0,quadrant sparse,1.4364541999639528,positive
+0,cm intramammary,1.4314683572080509,positive
+0,focal asymmetry,1.3433287669523415,positive
+0,retroareolar,1.3425481759439304,positive
+0,observed sparse,1.29509208423833,positive
+0,breast retroareolar,1.2426231696737184,positive
+0,punctate with,1.2345123693815434,positive
+0,overlap measuring,1.2135225189705547,positive
+0,calcifications at,1.2130632147849782,positive
+0,obscured oval,1.2026055024073483,positive
+0,stable intramammary,1.1930262468789259,positive
+0,isodense,1.1660286866048577,positive
+0,asymmetry at,1.1638320505562756,positive
+0,defined,1.125312280915729,positive
+0,highlighting an,1.1092546658804199,positive
+0,partially defined,1.0899910544517823,positive
+0,ultrasound,-2.860917823126726,negative
+0,stable,-2.344308413815379,negative
+0,since,-1.7389251057239004,negative
+0,stable since,-1.7169450402946522,negative
+0,calcifications located,-1.5793664319596634,negative
+0,on,-1.5120084889813938,negative
+0,suggesting,-1.4261405367914874,negative
+0,on ultrasound,-1.4089589930168003,negative
+0,performed on,-1.2697841157944008,negative
+0,punctate calcifications,-1.2019594852725277,negative
+0,corresponds to,-1.1653017854276955,negative
+0,corresponds,-1.163245026596958,negative
+0,which on,-1.1492613948051476,negative
+0,skin,-1.0727783311135426,negative
+0,observed intramammary,-1.0283434426999007,negative
+0,spiculated,-0.9755233026198668,negative
+0,to,-0.9572384712350885,negative
+0,changes were,-0.9489288717124252,negative
+0,ultrasound performed,-0.930988602344752,negative
+0,calcifications measuring,-0.9293533273357419,negative
+1,nodules no,2.929717003298704,positive
+1,breasts no,2.73104707596114,positive
+1,mammography no,2.4885657582476393,positive
+1,densities no,2.4321846133234137,positive
+1,densities right,1.858291304957633,positive
+1,observed the,1.7639039160159067,positive
+1,lumps no,1.57844312398163,positive
+1,tissue no,1.2376989343886435,positive
+1,method no,1.2338072106154456,positive
+1,node no,1.1792008652044255,positive
+1,findings focal,1.1545689470463065,positive
+1,breasts findings,1.1504966444306541,positive
+1,density no,1.093294641975657,positive
+1,on both,0.9612157457121423,positive
+1,right superolateral,0.9450288631326752,positive
+1,anteropectoral breast,0.9151883622745514,positive
+1,anteropectoral,0.9151883622745514,positive
+1,nodules anteropectoral,0.9151883622745514,positive
+1,tissue there,0.9082062460769006,positive
+1,right mammogramclinical,0.897252202656649,positive
+1,calcifications,-4.415808081002121,negative
+1,calcifications no,-4.278560393486369,negative
+1,sparse calcifications,-4.2637952794657465,negative
+1,sparse,-4.086297585012629,negative
+1,calcifications the,-1.7623588678712003,negative
+1,tissue sparse,-1.7076962408237142,negative
+1,es benignas,-1.6547773671497663,negative
+1,benignas,-1.6547773671497663,negative
+1,benignas esparsas,-1.6547773671497663,negative
+1,observed sparse,-1.6469831159873312,negative
+1,mammography sparse,-1.5572259537361417,negative
+1,breasts sparse,-1.43471088675122,negative
+1,esparsas,-1.431421914772151,negative
+1,calcifica,-1.3312695882182322,negative
+1,calcifica es,-1.3037742894398259,negative
+1,densities sparse,-1.270995472980059,negative
+1,nodules sparse,-1.2561176325659618,negative
+1,intramammary lymph,-1.244339777108283,negative
+1,intramammary,-1.2423852679150478,negative
+1,observed right,-1.0025737455314438,negative
+2,calcifications no,3.657638874336607,positive
+2,sparse calcifications,3.3773636380632603,positive
+2,sparse,3.1201349662856686,positive
+2,calcifications,2.784153326933623,positive
+2,mammography sparse,1.8284899479024672,positive
+2,cyst,1.7667248036497942,positive
+2,observed sparse,1.5352277877006681,positive
+2,breasts sparse,1.4930755899126575,positive
+2,fibroadenoma,1.4537336901867248,positive
+2,nodules sparse,1.4077531862968484,positive
+2,tissue sparse,1.374363198152383,positive
+2,simple,1.3543182194084522,positive
+2,years,1.3336619034380117,positive
+2,since,1.2434851520209163,positive
+2,densities sparse,1.2384608102707717,positive
+2,stable,1.2297639001496399,positive
+2,cystic on,1.1976979551250004,positive
+2,to simple,1.1925300461244928,positive
+2,years sparse,1.1456673467502236,positive
+2,cm and,1.1439924565541797,positive
+2,breasts no,-2.557539621189205,negative
+2,nodules no,-2.535843911971035,negative
+2,densities no,-2.37976333796587,negative
+2,mammography no,-1.7420378540026058,negative
+2,calcifications grouped,-1.6178442369241441,negative
+2,solid,-1.3730663221881791,negative
+2,lumps no,-1.3161925596206097,negative
+2,cm,-1.2743967401262644,negative
+2,punctate,-1.1410010308428695,negative
+2,grouped in,-1.115348196319512,negative
+2,months,-1.106416852076043,negative
+2,cm the,-1.0905877870731555,negative
+2,asymmetry located,-1.0897744709449126,negative
+2,measuring,-1.0872564002288208,negative
+2,circumscribed,-1.0753787837384041,negative
+2,cm no,-1.0562505573364527,negative
+2,asymmetry,-1.0492251454413255,negative
+2,the,-1.0436296627850181,negative
+2,correspondence,-1.0393990199215586,negative
+2,of calcifications,-1.0360812736513505,negative
+3,punctate,2.512241885983868,positive
+3,circumscribed,2.158437524741329,positive
+3,ultrasound,2.0427504343365355,positive
+3,correspondence,1.8195274297846429,positive
+3,months,1.742651570365596,positive
+3,punctate calcifications,1.7204765727105764,positive
+3,year,1.690269628757144,positive
+3,asymmetry located,1.621802033621945,positive
+3,for months,1.60206486684178,positive
+3,year sparse,1.600496103722746,positive
+3,margins retroareolar,1.565868786213551,positive
+3,asymmetry,1.5098585065584509,positive
+3,previous examination,1.4666441979920775,positive
+3,regional,1.4414039915211014,positive
+3,circumscribed oval,1.3810814460972023,positive
+3,isodense nodule,1.3775263686211343,positive
+3,remains after,1.3652031722614664,positive
+3,control,1.3473792209486293,positive
+3,compression and,1.3249327158296527,positive
+3,parallel,1.311600754083409,positive
+3,of nodules,-1.5845260145188558,negative
+3,years,-1.496177196786359,negative
+3,cyst,-1.4184988691980098,negative
+3,cystic,-1.2526714670418548,negative
+3,years sparse,-1.1980095909997455,negative
+3,residual fibroglandular,-1.1103429994219112,negative
+3,fibroadenoma,-1.0965459966975508,negative
+3,cysts sparse,-1.0881950724982783,negative
+3,obscured contours,-1.0543452381963372,negative
+3,obscured oval,-1.0493944516135536,negative
+3,superior medial,-1.044226309349061,negative
+3,characterized as,-1.0427199227764163,negative
+3,linear,-1.0405765768058202,negative
+3,exam,-1.0348763179519493,negative
+3,report,-1.0188774305555535,negative
+3,residual,-1.0103690578454174,negative
+3,nodules obscured,-1.0048987281506092,negative
+3,cm cystic,-0.983792913023458,negative
+3,indistinct,-0.9817145636240073,negative
+3,reports,-0.9799749270820021,negative
+4,amorphous,2.170848493573748,positive
+4,amorphous calcifications,2.07252063782882,positive
+4,enlargement in,1.962167744547683,positive
+4,pleomorphic calcifications,1.8043533494250141,positive
+4,breasts grouped,1.7256672555429382,positive
+4,nodules spiculated,1.6626187292876315,positive
+4,microlobulated,1.6534847061942928,positive
+4,indistinct,1.5727128393359577,positive
+4,calcifications located,1.4930942452341922,positive
+4,developing,1.4328566113395922,positive
+4,calcifications amorphous,1.4239095086420497,positive
+4,distribution located,1.3929935341603938,positive
+4,linear calcifications,1.385668538764993,positive
+4,heterogeneous coarse,1.3629048938034063,positive
+4,with indistinct,1.2815320267932695,positive
+4,cm no,1.2661655998574382,positive
+4,pleomorphic,1.2643314753196886,positive
+4,analysisprevious,1.2389988174971818,positive
+4,comparative analysisprevious,1.2389988174971818,positive
+4,analysisprevious mammograms,1.2389988174971818,positive
+4,circumscribed,-1.214894230413618,negative
+4,were,-0.9453472612408353,negative
+4,no,-0.9279421162752561,negative
+4,were observed,-0.9178370896005968,negative
+4,calcifications no,-0.8969788811177709,negative
+4,observed,-0.8808879011436674,negative
+4,linear and,-0.8712910286290723,negative
+4,and pleomorphic,-0.8701765510093753,negative
+4,punctate,-0.8442526766851676,negative
+4,parallel,-0.8404764651525298,negative
+4,to circumscribed,-0.821942683169305,negative
+4,with coarse,-0.8131254450983034,negative
+4,oval nodule,-0.8109000793014131,negative
+4,simple,-0.797066488543776,negative
+4,invasive,-0.7908739113129173,negative
+4,calcifications axillary,-0.7833119448600526,negative
+4,observed sparse,-0.7797398948871211,negative
+4,cm intramammary,-0.7775960199703384,negative
+4,cyst,-0.7430383770671755,negative
+4,regional,-0.734293933433249,negative
+5,spiculated,2.0271281990177554,positive
+5,densities spiculated,1.8317003965632668,positive
+5,with spiculated,1.3529117913136648,positive
+5,retraction,1.2642549709376587,positive
+5,spiculated margins,1.2576155506148456,positive
+5,and pleomorphic,1.1529586225711503,positive
+5,spike,1.0325065863467762,positive
+5,spiculated nodule,1.0197351159479977,positive
+5,linear and,0.9979344631802632,positive
+5,cm sparse,0.8330861846559858,positive
+5,non,0.8212341215277561,positive
+5,papillary retraction,0.789870165004524,positive
+5,non circumscribed,0.776080608683678,positive
+5,determining papillary,0.7028758635792607,positive
+5,retraction the,0.7028758635792607,positive
+5,between determining,0.7028758635792607,positive
+5,papillary,0.6925127089826562,positive
+5,mass,0.6869320818788666,positive
+5,associated with,0.66756987087315,positive
+5,and,0.6609676409371025,positive
+5,nodule located,-0.6279754510912647,negative
+5,right,-0.5899839991951469,negative
+5,enlargement comparative,-0.5599694423792617,negative
+5,cm no,-0.544548570889761,negative
+5,on,-0.4851073264414371,negative
+5,the right,-0.4824830763514793,negative
+5,is associated,-0.4781116940660089,negative
+5,irregular spiculated,-0.47566557029074275,negative
+5,partially,-0.42549984110255207,negative
+5,right breast,-0.37762360221908736,negative
+5,the,-0.34184296513205054,negative
+5,indistinct,-0.33895587894928086,negative
+5,breast no,-0.33702369822722494,negative
+5,papilla skin,-0.32866090229885125,negative
+5,retraction is,-0.32866090229885125,negative
+5,associated no,-0.32866090229885125,negative
+5,papilla sparse,-0.3284642415601907,negative
+5,observed,-0.32820567835422704,negative
+5,densities sparse,-0.32715204074159665,negative
+5,calcifications the,-0.31992020326353926,negative
+6,invasive,2.02521217090609,positive
+6,mammography segmental,1.6038129340389873,positive
+6,microcalcifications intramammary,1.5080491267420728,positive
+6,intervening microcalcifications,1.5080491267420728,positive
+6,segmental pleomorphic,1.3007584498783002,positive
+6,irregular,1.290177766794322,positive
+6,with intervening,1.0849146858919274,positive
+6,enlargement on,1.0843274277307269,positive
+6,invasive breast,1.050024276505856,positive
+6,intervening,1.0272518616953639,positive
+6,segmental,0.9986707937326582,positive
+6,cm located,0.9900657287537803,positive
+6,ductal in,0.9691099889547657,positive
+6,calcifications measuring,0.8940994864265795,positive
+6,ductal,0.825137436176852,positive
+6,of architectural,0.8140967925548094,positive
+6,pleomorphic calcifications,0.8113044509900575,positive
+6,espiculado,0.7997674874637787,positive
+6,biopsied,0.7786491142916026,positive
+6,spiculated,0.746330206401447,positive
+6,no,-0.45520637335475805,negative
+6,calcifications with,-0.4508617328131957,negative
+6,fibroadenoma,-0.4222227061530104,negative
+6,performed with,-0.3999930115016722,negative
+6,region,-0.3994827731921824,negative
+6,circumscribed,-0.38107175749144584,negative
+6,axillary region,-0.37221245850932455,negative
+6,were observed,-0.36938007202809364,negative
+6,changes,-0.3669915000257705,negative
+6,right axillary,-0.3556148264571843,negative
+6,and,-0.3552620238415937,negative
+6,de,-0.3375630659136054,negative
+6,clinical,-0.3370296987209604,negative
+6,observed,-0.33474618863721695,negative
+6,were,-0.33471847002212685,negative
+6,indication,-0.3257582991817436,negative
+6,extension,-0.3238746666044398,negative
+6,lesion,-0.32209821394759724,negative
+6,of fibroadenoma,-0.3170792800650946,negative
+6,region of,-0.3151315659207684,negative

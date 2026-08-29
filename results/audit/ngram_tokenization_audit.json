@@ -1,0 +1,19 @@
+{
+  "min_token_frequency": 2,
+  "vocabulary_size": 1592,
+  "train": {
+    "total_tokens": 338448,
+    "unk_tokens": 867,
+    "unk_rate": 0.002561693376825982
+  },
+  "validation": {
+    "total_tokens": 72246,
+    "unk_tokens": 391,
+    "unk_rate": 0.0054120643357417715
+  },
+  "test": {
+    "total_tokens": 71444,
+    "unk_tokens": 350,
+    "unk_rate": 0.00489894182856503
+  }
+}

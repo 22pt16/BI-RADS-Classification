@@ -1,0 +1,8 @@
+{
+  "empty_processed_reports": 0,
+  "duplicate_processed_reports": 614,
+  "unique_labels": 7,
+  "avg_word_count_raw": 53.91033881686458,
+  "avg_word_count_processed": 52.54602897919163,
+  "remaining_leakage_reports": 181
+}

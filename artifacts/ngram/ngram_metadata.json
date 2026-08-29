@@ -1,0 +1,24 @@
+{
+  "input": "data/splits/train.csv",
+  "validation": "data/splits/validation.csv",
+  "test": "data/splits/test.csv",
+  "tokenizer_pattern": "[a-z0-9]+(?:[./-][a-z0-9]+)*",
+  "min_token_frequency": 2,
+  "unknown_token": "<UNK>",
+  "boundary_tokens": [
+    "<BOS>",
+    "<EOS>"
+  ],
+  "unigram": "add-alpha, alpha=1.0",
+  "bigram": "interpolated Kneser-Ney",
+  "trigram": "interpolated Kneser-Ney with bigram backoff",
+  "classes": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ]
+}

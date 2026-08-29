@@ -1,0 +1,17 @@
+{
+    "purpose": "N-gram evaluation, visualization and explainability",
+    "models_evaluated": [
+        "Unigram",
+        "Bigram",
+        "Trigram"
+    ],
+    "primary_metric": "Macro F1",
+    "final_selected_model": "Bigram",
+    "final_test_model": "Bigram",
+    "outputs": {
+        "figures": "/content/drive/MyDrive/NLP_Research_Project/results/ngram_evaluation/figures",
+        "tables": "/content/drive/MyDrive/NLP_Research_Project/results/ngram_evaluation/tables",
+        "error_analysis": "/content/drive/MyDrive/NLP_Research_Project/results/ngram_evaluation/error_analysis",
+        "explainability": "/content/drive/MyDrive/NLP_Research_Project/results/ngram_evaluation/explainability"
+    }
+}
