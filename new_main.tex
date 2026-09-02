@@ -142,7 +142,7 @@ This paper's contributions are as follows.
 \subsection{BI-RADS Assessment Categories}
 
 The ACR BI-RADS system defines seven assessment categories for mammographic
-screening reports:
+screening reports~\cite{acr2013}:
 
 \begin{itemize}
   \item \textbf{Category 0}: Incomplete --- additional imaging needed.
@@ -185,7 +185,9 @@ For bigrams it is:
 where $D$ is an absolute discount estimated from counts-of-counts
 ($D = n_1 / (n_1 + 2n_2)$), $\lambda(h)$ is the interpolation weight,
 and $P_{\text{continuation}}(w) \propto |\{h' : C(h',w) > 0\}|$ measures the
-novelty of $w$ as a right-continuation across all contexts.
+novelty of $w$ as a right-continuation across all contexts. This absolute-discounting
+formulation, along with its trigram extension, follows the smoothing family
+evaluated extensively by Chen and Goodman~\cite{chen1998evaluation}.
 
 For trigrams, Kneser-Ney recursively backs off to the smoothed bigram estimate.
 For words unseen in the vocabulary (out-of-vocabulary tokens), Laplace-smoothed
@@ -201,7 +203,8 @@ Two feature representations are used:
         vocabulary of the top $k$ tokens by frequency.
   \item \textbf{TF-IDF} (Term Frequency--Inverse Document Frequency):
         Downweights terms that are uniformly common across classes,
-        amplifying class-discriminative terms.
+        amplifying class-discriminative terms, following the classical
+        term-weighting formulation of Salton and Buckley~\cite{salton1988term}.
 \end{itemize}
 
 Both representations are fit exclusively on the training split to prevent
@@ -233,12 +236,17 @@ over the last decade, for fairly obvious reasons: the reports already exist in
 large numbers, and manually coding them does not scale.
 Hassanpour and Langlotz~\cite{hassanpour2017information} showed early on that
 both rule-based and learned methods could pull structured information out of
-radiology text with reasonable accuracy, and Yala et al.~\cite{yala2017clinical}
-later pushed this further with convolutional and recurrent architectures for
-mammographic report classification. Negation handling turns out to matter a
-great deal in this domain---Peng et al.~\cite{peng2018negation} make this point
-well, and it is a large part of why our own preprocessing goes out of its way
-to preserve negation cues rather than stripping them out as generic stopwords.
+radiology text with reasonable accuracy. In a related but distinct line of
+work, Yala et al.~\cite{yala2019deep} used an image-based deep learning model
+on the mammogram pixels themselves (rather than the report text) to improve
+breast-cancer risk prediction, illustrating the broader push toward deep
+learning across the mammography workflow; closer to our own report-classification
+setting, Karimi et al.~\cite{karimi2017automatic} directly compared deep
+learning and conventional classifiers for autocoding radiology reports.
+Negation handling turns out to matter a great deal in this domain---Peng et
+al.~\cite{peng2018negbio} make this point well with their NegBio tool, and it
+is a large part of why our own preprocessing goes out of its way to preserve
+negation cues rather than stripping them out as generic stopwords.
 
 N-gram language models are, admittedly, an old idea, but they have stuck
 around in clinical NLP precisely because they are simple, fast, and easy to
@@ -256,11 +264,17 @@ paper less as competitors to transformers and more as a lower-cost baseline
 worth establishing first.
 
 Work specifically on Portuguese-language clinical text is comparatively rare.
-There is prior work on extracting BI-RADS categories from Portuguese
-radiology reports \cite{pestana2019breast}, but it does not compare multiple
-model families head to head under one evaluation protocol, which is the gap
-this paper tries to fill using a translate-then-classify setup that lets us
-reuse mature English-language NLP tooling on non-English clinical data.
+Nassif et al.~\cite{nassif2012extracting} built the first BI-RADS feature
+parser for Portuguese free text, but it targets feature-level extraction
+rather than full BI-RADS category classification and does not compare
+multiple model families head to head under one evaluation protocol, which is
+part of the gap this paper tries to fill. More broadly, our translate-then-classify
+setup follows the strategy examined by Artetxe et al.~\cite{artetxe2023revisiting},
+who show that translating text into a high-resource language before applying
+a monolingual classifier (``translate-test'') can be competitive with training
+multilingual models directly, and echoes the translation-based cross-lingual
+transfer strategies for clinical text explored by Papaioannou et
+al.~\cite{papaioannou2022cross} for non-English clinical phenotyping.
 
 % ============================================================
 \section{Problem Statement}
@@ -284,7 +298,11 @@ classifiers, and (iii) deep recurrent neural networks---to automatically predict
 the BI-RADS category of a mammography report from its translated and
 preprocessed text, and compare their performance under a unified evaluation
 protocol using accuracy, macro-averaged F1, and weighted F1 on the held-out
-test set.
+test set. Because macro and weighted F1 can rank models very differently under
+severe class imbalance, we report both throughout, following the guidance on
+evaluation-measure choice for imbalanced classification tasks given by
+Sokolova and Lapalme~\cite{sokolova2009systematic} and by Saito and
+Rehmsmeier~\cite{saito2015precision}.
 
 % ============================================================
 \section{Proposed Work}
@@ -405,7 +423,7 @@ $$
 D = \frac{n_1}{n_1 + 2n_2},
 $$
 
-where $n_1$ and $n_2$ denote the numbers of n-grams with frequencies one and two, respectively. Discount estimation was performed separately for bigram and trigram models within each BI-RADS class. For higher-order models, unseen contexts were resolved through a hierarchical back-off mechanism from trigram probabilities to bigram probabilities, followed by the Kneser--Ney continuation probability and, where required, a Laplace-smoothed unigram probability.
+where $n_1$ and $n_2$ denote the numbers of n-grams with frequencies one and two, respectively, following the counts-of-counts discount estimator described in~\cite{chen1998evaluation}. Discount estimation was performed separately for bigram and trigram models within each BI-RADS class. For higher-order models, unseen contexts were resolved through a hierarchical back-off mechanism from trigram probabilities to bigram probabilities, followed by the Kneser--Ney continuation probability and, where required, a Laplace-smoothed unigram probability.
 
 \textbf{Inference.}
 Given a tokenised test report represented by $\mathbf{w}$, each class-conditional language model estimates the report likelihood $P(\mathbf{w}\mid c)$. Classification is performed using a maximum a posteriori (MAP) decision rule:
@@ -446,17 +464,21 @@ extractors and five model families---ten combinations in total.
   \item \textbf{CountVectorizer}: top-$k$ unigram bag-of-words counts
         (fit on training set only).
   \item \textbf{TF-IDF}: $\ell_2$-normalised TF-IDF scores over the same
-        vocabulary.
+        vocabulary, following Salton and Buckley~\cite{salton1988term}.
 \end{itemize}
 
 \textbf{Models:}
 \begin{enumerate}
-  \item Multinomial Naive Bayes
+  \item Multinomial Naive Bayes, using the multinomial event model compared
+        by McCallum and Nigam~\cite{mccallum1998naive}
   \item Logistic Regression with $\ell_2$ penalty, \texttt{class\_weight=balanced},
         \texttt{max\_iter=1000}
-  \item Linear SVM (\texttt{LinearSVC}), \texttt{class\_weight=balanced}
-  \item Random Forest, 300 trees, \texttt{class\_weight=balanced}
-  \item XGBoost
+  \item Linear SVM (\texttt{LinearSVC}), \texttt{class\_weight=balanced},
+        following the text-categorisation formulation of
+        Joachims~\cite{joachims1998text}
+  \item Random Forest, 300 trees, \texttt{class\_weight=balanced}, as
+        introduced by Breiman~\cite{breiman2001random}
+  \item XGBoost~\cite{chen2016xgboost}
 \end{enumerate}
 
 All models are trained on $X_{\text{train}}$ and evaluated on $X_{\text{val}}$
@@ -475,7 +497,10 @@ token, padded/truncated to \texttt{max\_len=300} tokens.
 \textbf{Architecture.} All three models share the same skeleton: a 128-dimensional
 embedding layer, a 128-unit recurrent block, global average pooling, a
 64-unit dense ReLU layer, dropout at a rate of 0.4, and a 7-way softmax
-output.
+output. The embedding layer is trained end-to-end from a random initialisation
+rather than initialised from pre-trained vectors such as word2vec~\cite{mikolov2013efficient}
+or GloVe~\cite{pennington2014glove}; we return to this design choice, and the
+possibility of using pre-trained embeddings, in Section~\ref{sec:strengths}.
 
 The recurrent block differs per architecture:
 \begin{itemize}
@@ -504,7 +529,9 @@ Model weights are saved under \texttt{models/deep\_learning/} as
   \item \textbf{Evaluation measures:} Test-set Accuracy, Macro Precision,
         Macro Recall, Macro F1, Weighted F1.
     Macro averaging treats each class equally (critical for minority BI-RADS
-    detection); weighted averaging reflects real-world class frequency.
+    detection); weighted averaging reflects real-world class frequency. This
+    macro/weighted distinction, and its importance under class imbalance, is
+    discussed at length by Sokolova and Lapalme~\cite{sokolova2009systematic}.
   \item \textbf{Evaluation split:} All final numbers are reported on the
         held-out test set (1{,}377 reports).
 \end{itemize}
@@ -713,13 +740,17 @@ reassuring sign for using these margins as a rough confidence signal.
 \textbf{Classical ML.}
 Logistic Regression paired with CountVectorizer gives the best balance across
 classes (macro F1 = 0.718), which we'd put down to its balanced class weighting
-and its inherently discriminative objective. The linear SVM does best on
-weighted F1 (0.900), largely because the dominant BI-RADS~2 class is easy to
+and its inherently discriminative objective. The linear SVM~\cite{joachims1998text}
+does best on weighted F1 (0.900), largely because the dominant BI-RADS~2 class is easy to
 separate in TF-IDF space and weighted F1 rewards getting the majority class
-right. Naive Bayes struggles under TF-IDF---its independence assumption does
-not play well with dense, continuous TF-IDF weights---and Random Forest, despite
+right. Naive Bayes~\cite{mccallum1998naive} struggles under TF-IDF---its independence assumption does
+not play well with dense, continuous TF-IDF weights---and Random
+Forest~\cite{breiman2001random}, despite
 balanced class weights, still under-serves the minority classes, since
-tree-based splits tend to favour whichever class dominates a node.
+tree-based splits tend to favour whichever class dominates a node. XGBoost~\cite{chen2016xgboost}
+tracks a similar pattern to Random Forest on macro metrics despite its
+stronger boosting objective, again reflecting how little signal a handful of
+Category-5/6 examples can provide to a tree ensemble.
 
 \textbf{Deep learning.}
 The bidirectional LSTM edges out the plain LSTM on macro recall (0.545 vs.\
@@ -825,6 +856,7 @@ baseline, reaching 85.7\% accuracy and 59.4\% macro F1 with inference fast
 enough to run over the whole test set in a few seconds.
 
 \subsection{Pros}
+\label{sec:strengths}
 
 \begin{itemize}
   \item Modular, reproducible pipeline with deterministic tokenisation,
@@ -835,7 +867,10 @@ enough to run over the whole test set in a few seconds.
   \item Logistic Regression with balanced class weights offers the best
         macro-averaged F1 without GPU infrastructure.
   \item Deep learning models (LSTM, BiLSTM) achieve the highest accuracy and
-        are readily extendable to pre-trained embeddings.
+        are readily extendable to pre-trained embeddings such as
+        word2vec~\cite{mikolov2013efficient} or GloVe~\cite{pennington2014glove},
+        or to pre-trained clinical language models such as
+        ClinicalBERT~\cite{alsentzer2019publicly}.
 \end{itemize}
 
 \subsection{Limitations}
@@ -848,10 +883,13 @@ enough to run over the whole test set in a few seconds.
         artefacts; quality was assessed only by spot-check on 50 reports.
   \item \textbf{Residual leakage.} 181 reports retain partial BI-RADS cue
         words post-cleaning.
-  \item \textbf{No transformer models.} Models such as ClinicalBERT were not
-        evaluated in this study.
+  \item \textbf{No transformer models.} Models such as
+        ClinicalBERT~\cite{alsentzer2019publicly} were not evaluated in this
+        study.
   \item \textbf{Single language pair.} The paradigm has been validated only for
-        Portuguese$\to$English.
+        Portuguese$\to$English; the broader translate-test literature (e.g.
+        \cite{artetxe2023revisiting,papaioannou2022cross}) suggests results
+        may not transfer directly to other language pairs.
 \end{itemize}
 
 % ============================================================
@@ -859,11 +897,15 @@ enough to run over the whole test set in a few seconds.
 % ============================================================
 
 \begin{itemize}
-  \item \textbf{Transformer fine-tuning.} Fine-tuning ClinicalBERT, BioBERT,
-        or a Portuguese clinical BERT directly on original Portuguese text.
+  \item \textbf{Transformer fine-tuning.} Fine-tuning ClinicalBERT~\cite{alsentzer2019publicly},
+        BioBERT, or a Portuguese clinical BERT directly on original Portuguese text.
   \item \textbf{Multilingual models.} Applying mBERT or XLM-R to raw
-        Portuguese reports to eliminate translation noise.
-  \item \textbf{Class imbalance mitigation.} Oversampling (SMOTE), focal loss,
+        Portuguese reports to eliminate translation noise, in the spirit of
+        the cross-lingual transfer strategies studied by Papaioannou et
+        al.~\cite{papaioannou2022cross} and the translate-test analysis of
+        Artetxe et al.~\cite{artetxe2023revisiting}.
+  \item \textbf{Class imbalance mitigation.} Oversampling with
+        SMOTE~\cite{chawla2002smote}, focal loss~\cite{lin2017focal},
         or data augmentation for minority BI-RADS categories (4, 5, 6).
   \item \textbf{N-gram + ML ensemble.} Combining MAP log-posterior scores from
         the N-gram model with TF-IDF features as input to a meta-classifier.
@@ -872,70 +914,173 @@ enough to run over the whole test set in a few seconds.
   \item \textbf{Temporal validation.} Evaluating robustness across different
         acquisition years, hospitals, and radiologist writing styles.
   \item \textbf{Multi-modal integration.} Combining report text with
-        image-derived mammographic features in a joint model.
+        image-derived mammographic features, in the spirit of image-based
+        mammography models such as~\cite{yala2019deep}, in a joint model.
 \end{itemize}
 
 % ============================================================
 %  References
+%  Every entry below is fully wrapped in \href{URL}{...} (via hyperref),
+%  so clicking the citation text itself opens the source -- the raw URL
+%  is not printed. Every entry is cited at least once in the body text above.
 % ============================================================
 \begin{thebibliography}{99}
 
 \bibitem{acr2013}
+\href{https://www.acr.org/Clinical-Resources/Clinical-Tools-and-Reference/Reporting-and-Data-Systems/Bi-Rads}{%
 American College of Radiology (ACR).
 \textit{ACR BI-RADS Atlas, Breast Imaging Reporting and Data System}, 5th~ed.
-ACR, Reston, VA, 2013.
+ACR, Reston, VA, 2013.}
 
 \bibitem{kneser1995improved}
+\href{https://ieeexplore.ieee.org/document/479394}{%
 R.~Kneser and H.~Ney.
 Improved backing-off for M-gram language modeling.
-In \textit{Proc.\ IEEE ICASSP}, pp.~181--184, 1995.
+In \textit{Proc.\ IEEE ICASSP}, pp.~181--184, 1995.}
 
 \bibitem{hochreiter1997long}
+\href{https://doi.org/10.1162/neco.1997.9.8.1735}{%
 S.~Hochreiter and J.~Schmidhuber.
 Long short-term memory.
-\textit{Neural Computation}, 9(8):1735--1780, 1997.
+\textit{Neural Computation}, 9(8):1735--1780, 1997.}
 
 \bibitem{schuster1997bidirectional}
+\href{https://doi.org/10.1109/78.650093}{%
 M.~Schuster and K.~K.~Paliwal.
 Bidirectional recurrent neural networks.
-\textit{IEEE Trans.\ Signal Processing}, 45(11):2673--2681, 1997.
+\textit{IEEE Trans.\ Signal Processing}, 45(11):2673--2681, 1997.}
 
 \bibitem{hassanpour2017information}
+\href{https://doi.org/10.1016/j.artmed.2015.09.007}{%
 S.~Hassanpour and C.~P.~Langlotz.
 Information extraction from multi-institutional radiology reports.
-\textit{Artificial Intelligence in Medicine}, 66:1--9, 2016.
+\textit{Artificial Intelligence in Medicine}, 66:29--39, 2016.}
 
-\bibitem{yala2017clinical}
-A.~Yala et al.
-A clinical deep learning system to predict breast cancer risk.
-\textit{Science Translational Medicine}, 2019.
+\bibitem{yala2019deep}
+\href{https://doi.org/10.1148/radiol.2019182716}{%
+A.~Yala, C.~Lehman, T.~Schuster, T.~Portnoi, and R.~Barzilay.
+A deep learning mammography-based model for improved breast cancer risk prediction.
+\textit{Radiology}, 292(1):60--66, 2019.}
 
-\bibitem{peng2018negation}
-Y.~Peng et al.
-Negation and uncertainty detection in clinical text: a deep learning approach.
-\textit{Journal of Biomedical Informatics}, 2018.
+\bibitem{peng2018negbio}
+\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC5961815/}{%
+Y.~Peng, X.~Wang, L.~Lu, M.~Bagheri, R.~Summers, and Z.~Lu.
+NegBio: a high-performance tool for negation and uncertainty detection in radiology reports.
+\textit{AMIA Summits on Translational Science Proceedings}, pp.~188--196, 2018.}
 
 \bibitem{friedman2004natural}
-C.~Friedman et al.
+\href{https://doi.org/10.1197/jamia.M1552}{%
+C.~Friedman, L.~Shagina, Y.~Lussier, and G.~Hripcsak.
 Automated encoding of clinical documents based on natural language processing.
-\textit{JAMIA}, 11(5):392--402, 2004.
+\textit{Journal of the American Medical Informatics Association}, 11(5):392--402, 2004.}
 
 \bibitem{chen1998evaluation}
+\href{https://doi.org/10.1006/csla.1999.0128}{%
 S.~F.~Chen and J.~Goodman.
 An empirical study of smoothing techniques for language modeling.
-\textit{Computer Speech \& Language}, 13(4):359--394, 1999.
+\textit{Computer Speech \& Language}, 13(4):359--394, 1999.}
 
 \bibitem{alsentzer2019publicly}
-E.~Alsentzer et al.
+\href{https://aclanthology.org/W19-1909/}{%
+E.~Alsentzer, J.~R.~Murphy, W.~Boag, W.-H.~Weng, D.~Jindi, T.~Naumann, and M.~McDermott.
 Publicly available clinical BERT embeddings.
-In \textit{Proc.\ 2nd Clinical NLP Workshop}, 2019.
+In \textit{Proc.\ 2nd Clinical NLP Workshop}, 2019.}
 
-\bibitem{pestana2019breast}
-% TODO: Verify / replace with the actual citation for Portuguese BI-RADS NLP work.
-% This is a placeholder reference --- flagged in changelog.
-A.~Pestana et al.
-Automatic extraction of BI-RADS categories from Portuguese mammography reports.
-2019.
+\bibitem{nassif2012extracting}
+\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC3688645}{%
+H.~Nassif, F.~Cunha, I.~C.~Moreira, R.~Cruz-Correia, E.~Sousa, D.~Page, E.~Burnside, and I.~Dutra.
+Extracting BI-RADS features from Portuguese clinical texts.
+In \textit{IEEE Int.\ Conf.\ on Bioinformatics and Biomedicine (BIBM)}, pp.~1--4, 2012.}
+
+\bibitem{joachims1998text}
+\href{https://link.springer.com/chapter/10.1007/BFb0026683}{%
+T.~Joachims.
+Text categorization with support vector machines: learning with many relevant features.
+In \textit{Proc.\ 10th European Conference on Machine Learning (ECML)}, 1998.}
+
+\bibitem{salton1988term}
+\href{https://doi.org/10.1016/0306-4573(88)90021-0}{%
+G.~Salton and C.~Buckley.
+Term-weighting approaches in automatic text retrieval.
+\textit{Information Processing \& Management}, 24(5):513--523, 1988.}
+
+\bibitem{mccallum1998naive}
+\href{https://www.cs.cmu.edu/~knigam/papers/multinomial-aaaiws98.pdf}{%
+A.~McCallum and K.~Nigam.
+A comparison of event models for Naive Bayes text classification.
+In \textit{AAAI-98 Workshop on Learning for Text Categorization}, pp.~41--48, 1998.}
+
+\bibitem{breiman2001random}
+\href{https://doi.org/10.1023/A:1010933404324}{%
+L.~Breiman.
+Random forests.
+\textit{Machine Learning}, 45:5--32, 2001.}
+
+\bibitem{chen2016xgboost}
+\href{https://doi.org/10.1145/2939672.2939785}{%
+T.~Chen and C.~Guestrin.
+XGBoost: a scalable tree boosting system.
+In \textit{Proc.\ 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
+pp.~785--794, 2016.}
+
+\bibitem{karimi2017automatic}
+\href{https://aclanthology.org/W17-2342/}{%
+S.~Karimi, X.~Dai, H.~Hassanzadeh, and A.~Nguyen.
+Automatic diagnosis coding of radiology reports: a comparison of deep learning and conventional classification methods.
+In \textit{Proc.\ BioNLP 2017 Workshop}, pp.~328--332, 2017.}
+
+\bibitem{mikolov2013efficient}
+\href{https://arxiv.org/abs/1301.3781}{%
+T.~Mikolov, K.~Chen, G.~Corrado, and J.~Dean.
+Efficient estimation of word representations in vector space.
+In \textit{International Conference on Learning Representations (ICLR)}, 2013.}
+
+\bibitem{pennington2014glove}
+\href{https://doi.org/10.3115/v1/D14-1162}{%
+J.~Pennington, R.~Socher, and C.~D.~Manning.
+GloVe: global vectors for word representation.
+In \textit{Proc.\ 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+pp.~1532--1543, 2014.}
+
+\bibitem{artetxe2023revisiting}
+\href{https://aclanthology.org/2023.emnlp-main.399/}{%
+M.~Artetxe, V.~Goswami, S.~Bhosale, A.~Fan, and L.~Zettlemoyer.
+Revisiting machine translation for cross-lingual classification.
+In \textit{Proc.\ 2023 Conference on Empirical Methods in Natural Language Processing},
+pp.~6489--6499, 2023.}
+
+\bibitem{papaioannou2022cross}
+\href{https://aclanthology.org/2022.lrec-1.95/}{%
+J.-M.~Papaioannou, P.~Grundmann, B.~van Aken, A.~Samaras, I.~Kyparissidis,
+G.~Giannakoulas, F.~Gers, and A.~L\"oser.
+Cross-lingual knowledge transfer for clinical phenotyping.
+In \textit{Proc.\ 13th International Conference on Language Resources and Evaluation (LREC)},
+pp.~900--909, 2022.}
+
+\bibitem{chawla2002smote}
+\href{https://doi.org/10.1613/jair.953}{%
+N.~V.~Chawla, K.~W.~Bowyer, L.~O.~Hall, and W.~P.~Kegelmeyer.
+SMOTE: synthetic minority over-sampling technique.
+\textit{Journal of Artificial Intelligence Research}, 16:321--357, 2002.}
+
+\bibitem{lin2017focal}
+\href{https://doi.org/10.1109/ICCV.2017.324}{%
+T.-Y.~Lin, P.~Goyal, R.~Girshick, K.~He, and P.~Doll\'{a}r.
+Focal loss for dense object detection.
+In \textit{Proc.\ IEEE International Conference on Computer Vision (ICCV)},
+pp.~2980--2988, 2017.}
+
+\bibitem{saito2015precision}
+\href{https://doi.org/10.1371/journal.pone.0118432}{%
+T.~Saito and M.~Rehmsmeier.
+The precision-recall plot is more informative than the ROC plot when evaluating binary classifiers on imbalanced datasets.
+\textit{PLOS ONE}, 10(3):e0118432, 2015.}
+
+\bibitem{sokolova2009systematic}
+\href{https://doi.org/10.1016/j.ipm.2009.03.002}{%
+M.~Sokolova and G.~Lapalme.
+A systematic analysis of performance measures for classification tasks.
+\textit{Information Processing \& Management}, 45(4):427--437, 2009.}
 
 \end{thebibliography}
 
