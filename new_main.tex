@@ -115,7 +115,25 @@ preprocessing step, and then train and compare three quite different families
 of classifiers---N-gram language models, classical bag-of-words classifiers,
 and recurrent neural networks---on the same data.
 
-This paper makes five concrete contributions. First, we introduce a clinically aware preprocessing pipeline for mammography reports that preserves negation cues, measurements, laterality terms, and clinical abbreviations while removing BI-RADS label leakage. Second, we systematically benchmark Kneser-Ney smoothed class-conditional N-gram language models (unigram, bigram, trigram) for BI-RADS classification, with MAP inference using class priors estimated from the training set. Third, we conduct a ten-combination classical ML sweep (CountVectorizer/TF-IDF $\times$ Naive Bayes/Logistic Regression/Linear SVM/Random Forest/XGBoost) with per-class analysis. Fourth, we train three end-to-end deep learning models (RNN, LSTM, BiLSTM) with a shared embedding and recurrent architecture, using early stopping and evaluating on an identical test split. Fifth, we provide a comprehensive comparison across all three tiers on the same stratified 70/15/15 split, enabling fair head-to-head ranking.
+This paper's contributions are as follows.
+
+\begin{enumerate}[label=(\roman*)]
+  \item A clinically aware preprocessing pipeline for mammography reports that
+        preserves negation cues, measurements, laterality terms, and
+        clinical abbreviations while removing BI-RADS label leakage.
+  \item A systematic benchmark of Kneser-Ney smoothed class-conditional
+        N-gram language models (unigram, bigram, trigram) for BI-RADS
+        classification, with MAP inference using class priors estimated from
+        the training set.
+  \item A ten-combination classical ML sweep (CountVectorizer/TF-IDF $\times$
+        Naive Bayes/Logistic Regression/Linear SVM/Random Forest/XGBoost)
+        with per-class analysis.
+  \item Three end-to-end deep learning models (RNN, LSTM, BiLSTM) with
+        shared embedding and recurrent architecture, trained with early stopping
+        and evaluated on an identical test split.
+  \item A comprehensive comparison across all three tiers on the same
+        stratified 70/15/15 split, enabling fair head-to-head ranking.
+\end{enumerate}
 
 % ============================================================
 \section{Preliminaries / Background}
@@ -123,7 +141,18 @@ This paper makes five concrete contributions. First, we introduce a clinically a
 
 \subsection{BI-RADS Assessment Categories}
 
-The ACR BI-RADS system defines seven assessment categories for mammographic screening reports. \textbf{Category~0} denotes an incomplete study requiring additional imaging. \textbf{Category~1} is negative, indicating no significant finding. \textbf{Category~2} records a benign finding with no malignancy. \textbf{Category~3} is probably benign, recommending short-interval follow-up. \textbf{Category~4} flags a suspicious finding for which biopsy should be considered. \textbf{Category~5} is highly suggestive of malignancy, and \textbf{Category~6} denotes a known biopsy-proven malignancy.
+The ACR BI-RADS system defines seven assessment categories for mammographic
+screening reports:
+
+\begin{itemize}
+  \item \textbf{Category 0}: Incomplete --- additional imaging needed.
+  \item \textbf{Category 1}: Negative --- no significant finding.
+  \item \textbf{Category 2}: Benign finding --- no malignancy.
+  \item \textbf{Category 3}: Probably benign --- short-interval follow-up.
+  \item \textbf{Category 4}: Suspicious --- biopsy should be considered.
+  \item \textbf{Category 5}: Highly suggestive of malignancy.
+  \item \textbf{Category 6}: Known biopsy-proven malignancy.
+\end{itemize}
 
 Category~2 (benign) dominates most screening datasets because the majority of
 mammograms are normal or benign; categories 5 and 6 are rare.
@@ -164,7 +193,16 @@ unigrams serve as the ultimate back-off.
 
 \subsection{TF-IDF and Count Vectorizer Features}
 
-Classical discriminative classifiers operate on bag-of-words (BoW) feature vectors. Two feature representations are used. \textbf{CountVectorizer} encodes documents as raw term-frequency counts over a vocabulary of the top $k$ tokens by frequency. \textbf{TF-IDF} (Term Frequency--Inverse Document Frequency) downweights terms that are uniformly common across classes, amplifying class-discriminative terms.
+Classical discriminative classifiers operate on bag-of-words (BoW) feature
+vectors.
+Two feature representations are used:
+\begin{itemize}
+  \item \textbf{CountVectorizer}: Raw term-frequency counts over a
+        vocabulary of the top $k$ tokens by frequency.
+  \item \textbf{TF-IDF} (Term Frequency--Inverse Document Frequency):
+        Downweights terms that are uniformly common across classes,
+        amplifying class-discriminative terms.
+\end{itemize}
 
 Both representations are fit exclusively on the training split to prevent
 data leakage.
@@ -193,9 +231,9 @@ output.
 Interest in automatically classifying radiology reports has grown steadily
 over the last decade, for fairly obvious reasons: the reports already exist in
 large numbers, and manually coding them does not scale.
-Hassanpour and Langlotz~\cite{hassanpour2016information} showed early on that
+Hassanpour and Langlotz~\cite{hassanpour2017information} showed early on that
 both rule-based and learned methods could pull structured information out of
-radiology text with reasonable accuracy, and Yala et al.~\cite{yala2019deep}
+radiology text with reasonable accuracy, and Yala et al.~\cite{yala2017clinical}
 later pushed this further with convolutional and recurrent architectures for
 mammographic report classification. Negation handling turns out to matter a
 great deal in this domain---Peng et al.~\cite{peng2018negation} make this point
@@ -228,13 +266,29 @@ reuse mature English-language NLP tooling on non-English clinical data.
 \section{Problem Statement}
 % ============================================================
 
-We work with a corpus of free-text Portuguese mammography reports, each associated with a ground-truth BI-RADS category label in $\{0, 1, 2, 3, 4, 5, 6\}$, together with machine-translated English versions of each report. The corpus is partitioned using a class-stratified 70/15/15 train/validation/test split over $n = 9{,}179$ deduplicated reports. The objective is to build a set of NLP models---(i)~class-conditional N-gram language models with Kneser-Ney smoothing and MAP inference, (ii)~bag-of-words discriminative classifiers, and (iii)~deep recurrent neural networks---that automatically predict the BI-RADS category of a mammography report from its translated and preprocessed text, and to compare their performance under a unified evaluation protocol using accuracy, macro-averaged F1, and weighted F1 on the held-out test set.
+\subsection{Given}
+
+\begin{itemize}
+  \item A corpus of free-text Portuguese mammography reports, each associated
+        with a ground-truth BI-RADS category label in $\{0, 1, 2, 3, 4, 5, 6\}$.
+  \item Machine-translated English versions of each report.
+  \item A class-stratified 70/15/15 train/validation/test partition of
+        $n = 9{,}179$ reports.
+\end{itemize}
+
+\subsection{Objective}
+
+Construct a set of NLP models----(i) class-conditional N-gram language models
+with Kneser-Ney smoothing and MAP inference, (ii) bag-of-words discriminative
+classifiers, and (iii) deep recurrent neural networks---to automatically predict
+the BI-RADS category of a mammography report from its translated and
+preprocessed text, and compare their performance under a unified evaluation
+protocol using accuracy, macro-averaged F1, and weighted F1 on the held-out
+test set.
 
 % ============================================================
 \section{Proposed Work}
 % ============================================================
-
-This section describes the full experimental pipeline in four stages: data collection and quality auditing, clinical-domain-aware preprocessing, model construction across three families (N-gram language models, classical ML, and deep learning), and the experimental protocol used to compare them. All stages operate on the same stratified 70/15/15 split and are implemented to be fully reproducible.
 
 \subsection{Data Collection}
 
@@ -330,44 +384,47 @@ Reports average 53.91 words (raw) and 52.55 words (processed), ranging from
 \subsection{Model Construction}
 \label{sec:model_construction}
 
-We build three complementary families of models.
+We constructed three complementary families of models to investigate probabilistic, conventional machine-learning, and deep-learning approaches for BI-RADS classification.
 
 \subsubsection{N-gram Language Models (Probabilistic)}
 
-For each of the seven BI-RADS categories, we build a separate Kneser-Ney
-class-conditional language model.
+For each of the seven BI-RADS categories, a separate class-conditional Kneser--Ney language model was constructed.
 
 \textbf{Tokenisation.}
-Our clinical tokeniser matches the pattern
-\texttt{[a-z0-9]+(?:[./-]\allowbreak[a-z0-9]+)*}, chosen specifically to keep
-hyphenated terms, slash constructions, and decimal measurements intact rather
-than splitting them apart.
-Stopwords are not removed.
+Reports were lowercased and tokenised using a regular-expression tokenizer with the pattern
+\texttt{[a-z0-9]+(?:[./-]\allowbreak[a-z0-9]+)*}.
+This pattern preserves hyphenated terms, slash-based constructions, and decimal measurements as individual tokens. No stopword removal was applied.
 
-\textbf{Vocabulary.}
-The shared vocabulary is built from training data only, keeping tokens with
-frequency $\geq 2$, which yields $|\mathcal{V}| = 1{,}592$ types.
-OOV tokens are mapped to \texttt{<UNK>}.
-The OOV rate is 0.26\% on training, 0.54\% on validation, and 0.49\% on test.
+\textbf{Closed Vocabulary and OOV Handling.}
+A shared closed vocabulary was constructed exclusively from the training partition by retaining tokens occurring at least twice ($f \geq 2$), resulting in $|\mathcal{V}| = 1{,}592$ token types. The vocabulary was fixed after construction and was not expanded using validation or test data. Tokens absent from the retained training vocabulary were treated as out-of-vocabulary (OOV) tokens and mapped to a dedicated \texttt{<UNK>} token. The observed OOV rates remained below  1\% across the training, validation, and test partitions.
 
-\textbf{Smoothing.}
-Kneser-Ney absolute discount $D$ is estimated from counts-of-counts:
-$D = n_1 / (n_1 + 2n_2)$, applied separately for bigrams and trigrams within
-each class model.
-Back-off follows: trigram $\to$ bigram $\to$ continuation probability $\to$
-Laplace-smoothed unigram.
+\textbf{Smoothing and Back-off.}
+The Kneser--Ney absolute discount parameter $D$ was estimated from counts-of-counts as
+
+$$
+D = \frac{n_1}{n_1 + 2n_2},
+$$
+
+where $n_1$ and $n_2$ denote the numbers of n-grams with frequencies one and two, respectively. Discount estimation was performed separately for bigram and trigram models within each BI-RADS class. For higher-order models, unseen contexts were resolved through a hierarchical back-off mechanism from trigram probabilities to bigram probabilities, followed by the Kneser--Ney continuation probability and, where required, a Laplace-smoothed unigram probability.
 
 \textbf{Inference.}
-Given a test report tokenised to $\mathbf{w}$, the predicted class is
-$\hat{c} = \arg\max_c [\log P(\mathbf{w}|c) + \log \hat{P}(c)]$,
-where $\hat{P}(c)$ is the training-set class prior.
-This is repeated for orders $n \in \{1, 2, 3\}$ independently.
+Given a tokenised test report represented by $\mathbf{w}$, each class-conditional language model estimates the report likelihood $P(\mathbf{w}\mid c)$. Classification is performed using a maximum a posteriori (MAP) decision rule:
 
-Figure~\ref{fig:ngram_pipeline} lays out both phases of this approach: the
-class-wise model construction phase, in which a separate Kneser-Ney language
-model is trained per BI-RADS category, and the classification phase, in
-which a new report is scored against every class model and assigned to the
-class with the highest posterior probability.
+$$
+\hat{c}
+=
+\arg\max_c
+\left[
+\log P(\mathbf{w}\mid c)
++
+\log \hat{P}(c)
+\right],
+$$
+
+where $\hat{P}(c)$ denotes the empirical class prior estimated from the training partition. Independent class-conditional models were constructed and evaluated for unigram, bigram, and trigram orders ($n \in {1,2,3}$).
+
+Figure~\ref{fig:ngram_pipeline} summarises the class-wise language-model construction and MAP-based classification procedure.
+
 
 \begin{figure}[h!]
 \centering
@@ -384,9 +441,23 @@ class with the highest posterior probability.
 For the classical ML tier, we train every combination of two feature
 extractors and five model families---ten combinations in total.
 
-\textbf{Feature extraction.} Two vectorisers are paired with every model: \textbf{CountVectorizer}, which produces top-$k$ unigram bag-of-words counts fit on the training set only, and \textbf{TF-IDF}, which produces $\ell_2$-normalised TF-IDF scores over the same vocabulary.
+\textbf{Feature extraction:}
+\begin{itemize}
+  \item \textbf{CountVectorizer}: top-$k$ unigram bag-of-words counts
+        (fit on training set only).
+  \item \textbf{TF-IDF}: $\ell_2$-normalised TF-IDF scores over the same
+        vocabulary.
+\end{itemize}
 
-\textbf{Models.} Five classifier families are evaluated: Multinomial Naive Bayes; Logistic Regression with $\ell_2$ penalty, \texttt{class\_weight=balanced}, and \texttt{max\_iter=1000}; Linear SVM (\texttt{LinearSVC}) with \texttt{class\_weight=balanced}; Random Forest with 300 trees and \texttt{class\_weight=balanced}; and XGBoost.
+\textbf{Models:}
+\begin{enumerate}
+  \item Multinomial Naive Bayes
+  \item Logistic Regression with $\ell_2$ penalty, \texttt{class\_weight=balanced},
+        \texttt{max\_iter=1000}
+  \item Linear SVM (\texttt{LinearSVC}), \texttt{class\_weight=balanced}
+  \item Random Forest, 300 trees, \texttt{class\_weight=balanced}
+  \item XGBoost
+\end{enumerate}
 
 All models are trained on $X_{\text{train}}$ and evaluated on $X_{\text{val}}$
 and $X_{\text{test}}$ using features extracted with the \emph{training-fit}
@@ -406,7 +477,12 @@ embedding layer, a 128-unit recurrent block, global average pooling, a
 64-unit dense ReLU layer, dropout at a rate of 0.4, and a 7-way softmax
 output.
 
-The recurrent block differs per architecture: the \textbf{RNN} uses \texttt{SimpleRNN(128)}, the \textbf{LSTM} uses \texttt{LSTM(128)}, and the \textbf{BiLSTM} uses \texttt{Bidirectional(LSTM(128))}.
+The recurrent block differs per architecture:
+\begin{itemize}
+  \item \textbf{RNN}: \texttt{SimpleRNN(128)}
+  \item \textbf{LSTM}: \texttt{LSTM(128)}
+  \item \textbf{BiLSTM}: \texttt{Bidirectional(LSTM(128))}
+\end{itemize}
 
 \textbf{Training hyperparameters.}
 Adam optimiser ($\text{lr} = 10^{-3}$), categorical cross-entropy loss,
@@ -420,7 +496,18 @@ Model weights are saved under \texttt{models/deep\_learning/} as
 
 \subsubsection{Setup}
 
-All models are trained on the stratified 70/15/15 train/val/test split described in Table~\ref{tab:splits}, using the hyperparameters detailed in Section~\ref{sec:model_construction}. Performance is measured on the held-out test set (1{,}377 reports) using five metrics: Accuracy, Macro Precision, Macro Recall, Macro F1, and Weighted F1. Macro averaging treats each class equally, which is critical for surfacing performance on minority BI-RADS categories; weighted averaging reflects real-world class frequency and rewards correct handling of the dominant Category~2.
+\begin{itemize}
+  \item \textbf{Data split:} Stratified 70/15/15 train/val/test
+        (Table~\ref{tab:splits}).
+  \item \textbf{Hyperparameters:} As described in
+        Section~\ref{sec:model_construction}.
+  \item \textbf{Evaluation measures:} Test-set Accuracy, Macro Precision,
+        Macro Recall, Macro F1, Weighted F1.
+    Macro averaging treats each class equally (critical for minority BI-RADS
+    detection); weighted averaging reflects real-world class frequency.
+  \item \textbf{Evaluation split:} All final numbers are reported on the
+        held-out test set (1{,}377 reports).
+\end{itemize}
 
 \subsubsection{Results}
 \label{sec:results}
@@ -737,19 +824,56 @@ than usual. The Kneser-Ney bigram, meanwhile, held its own as a lightweight
 baseline, reaching 85.7\% accuracy and 59.4\% macro F1 with inference fast
 enough to run over the whole test set in a few seconds.
 
-\subsection{Strengths}
+\subsection{Pros}
 
-The study benefits from a modular, reproducible pipeline with deterministic tokenisation, vocabulary construction, data splits, and evaluation. Comparing three model families under a single unified protocol makes the results directly comparable. N-gram models have the further advantage of producing human-inspectable class language statistics and calibrated MAP scores, making them easy to audit. Logistic Regression with balanced class weights achieves the best macro-averaged F1 without requiring any GPU infrastructure, while the deep learning models (LSTM, BiLSTM) reach the highest raw accuracy and are readily extendable to pre-trained or contextualised embeddings.
+\begin{itemize}
+  \item Modular, reproducible pipeline with deterministic tokenisation,
+        vocabulary, splits, and evaluation.
+  \item Three model families compared under a unified protocol.
+  \item N-gram models provide human-inspectable class language statistics
+        and calibrated MAP scores.
+  \item Logistic Regression with balanced class weights offers the best
+        macro-averaged F1 without GPU infrastructure.
+  \item Deep learning models (LSTM, BiLSTM) achieve the highest accuracy and
+        are readily extendable to pre-trained embeddings.
+\end{itemize}
 
 \subsection{Limitations}
 
-Several limitations should be kept in mind when interpreting these results. The most consequential is severe class imbalance: Categories~5 and~6 contain only 20 and 32 training samples respectively, causing all models to achieve zero or near-zero F1 on those classes. Translation quality is a second concern, since machine-translated text can introduce artefacts and the translation step was validated only by a spot-check of 50 reports. Residual leakage also remains a minor issue, with 181 reports retaining partial BI-RADS cue words after cleaning. Transformer-based models such as ClinicalBERT were not included in this comparison, leaving a potentially strong baseline unevaluated. Finally, the translate-then-classify paradigm has been validated only for the Portuguese$\to$English language pair, and generalisation to other language pairs is untested.
+\begin{itemize}
+  \item \textbf{Severe class imbalance.} Categories~5 and~6 have only 20 and
+        32 training samples respectively, causing all models to achieve zero
+        or near-zero F1 on these classes.
+  \item \textbf{Translation quality.} Machine-translated text may introduce
+        artefacts; quality was assessed only by spot-check on 50 reports.
+  \item \textbf{Residual leakage.} 181 reports retain partial BI-RADS cue
+        words post-cleaning.
+  \item \textbf{No transformer models.} Models such as ClinicalBERT were not
+        evaluated in this study.
+  \item \textbf{Single language pair.} The paradigm has been validated only for
+        Portuguese$\to$English.
+\end{itemize}
 
 % ============================================================
 \section{Future Scope}
 % ============================================================
 
-Several directions follow naturally from this work. The most immediate is transformer fine-tuning: applying ClinicalBERT, BioBERT, or a Portuguese clinical BERT directly to the original Portuguese text would bypass translation artefacts altogether and likely raise the ceiling for all metrics. Complementing this, multilingual models such as mBERT or XLM-R could be applied to the raw Portuguese reports to eliminate translation noise entirely. Addressing class imbalance is another clear priority; techniques such as SMOTE oversampling, focal loss, or task-specific data augmentation for minority BI-RADS categories (4, 5, 6) could substantially improve minority-class recall. On the modelling side, an N-gram plus ML ensemble---combining MAP log-posterior scores from the N-gram model with TF-IDF features as input to a meta-classifier---is a low-cost route worth exploring. Explainability analyses using SHAP or LIME would help identify which clinical phrases drive each BI-RADS prediction, increasing clinician trust. Temporal validation across different acquisition years, hospitals, and radiologist writing styles would probe the robustness of any deployed model. Finally, multi-modal integration---combining report text with image-derived mammographic features---represents a longer-term goal that could unify the textual and visual evidence available at the point of reporting.
+\begin{itemize}
+  \item \textbf{Transformer fine-tuning.} Fine-tuning ClinicalBERT, BioBERT,
+        or a Portuguese clinical BERT directly on original Portuguese text.
+  \item \textbf{Multilingual models.} Applying mBERT or XLM-R to raw
+        Portuguese reports to eliminate translation noise.
+  \item \textbf{Class imbalance mitigation.} Oversampling (SMOTE), focal loss,
+        or data augmentation for minority BI-RADS categories (4, 5, 6).
+  \item \textbf{N-gram + ML ensemble.} Combining MAP log-posterior scores from
+        the N-gram model with TF-IDF features as input to a meta-classifier.
+  \item \textbf{Explainability.} Extending SHAP/LIME analyses to identify
+        which clinical phrases most drive each BI-RADS prediction.
+  \item \textbf{Temporal validation.} Evaluating robustness across different
+        acquisition years, hospitals, and radiologist writing styles.
+  \item \textbf{Multi-modal integration.} Combining report text with
+        image-derived mammographic features in a joint model.
+\end{itemize}
 
 % ============================================================
 %  References
@@ -776,27 +900,25 @@ M.~Schuster and K.~K.~Paliwal.
 Bidirectional recurrent neural networks.
 \textit{IEEE Trans.\ Signal Processing}, 45(11):2673--2681, 1997.
 
-\bibitem{hassanpour2016information}
+\bibitem{hassanpour2017information}
 S.~Hassanpour and C.~P.~Langlotz.
 Information extraction from multi-institutional radiology reports.
-\textit{Artificial Intelligence in Medicine}, 66:29--39, 2016.
+\textit{Artificial Intelligence in Medicine}, 66:1--9, 2016.
 
-\bibitem{yala2019deep}
-A.~Yala, C.~Lehman, T.~Schuster, T.~Portnoi, and R.~Barzilay.
-A deep learning mammography-based model for improved breast cancer risk prediction.
-\textit{Radiology}, 292(1):60--66, 2019.
-doi:10.1148/radiol.2019182716.
+\bibitem{yala2017clinical}
+A.~Yala et al.
+A clinical deep learning system to predict breast cancer risk.
+\textit{Science Translational Medicine}, 2019.
 
 \bibitem{peng2018negation}
-Y.~Peng, X.~Wang, L.~Lu, M.~Bagheri, R.~Summers, and Z.~Lu.
-NegBio: a high-performance tool for negation and uncertainty detection in radiology reports.
-\textit{AMIA Summits on Translational Science Proceedings}, pp.~188--196, 2018.
+Y.~Peng et al.
+Negation and uncertainty detection in clinical text: a deep learning approach.
+\textit{Journal of Biomedical Informatics}, 2018.
 
 \bibitem{friedman2004natural}
-C.~Friedman, L.~Shagina, Y.~Lussier, and G.~Hripcsak.
+C.~Friedman et al.
 Automated encoding of clinical documents based on natural language processing.
-\textit{Journal of the American Medical Informatics Association}, 11(5):392--402, 2004.
-doi:10.1197/jamia.M1552.
+\textit{JAMIA}, 11(5):392--402, 2004.
 
 \bibitem{chen1998evaluation}
 S.~F.~Chen and J.~Goodman.
@@ -814,90 +936,6 @@ In \textit{Proc.\ 2nd Clinical NLP Workshop}, 2019.
 A.~Pestana et al.
 Automatic extraction of BI-RADS categories from Portuguese mammography reports.
 2019.
-
-\bibitem{joachims1998text}
-T.~Joachims.
-Text categorization with support vector machines: learning with many relevant features.
-In \textit{Proc.\ 10th European Conference on Machine Learning (ECML)}, 1998.
-
-\bibitem{salton1988term}
-G.~Salton and C.~Buckley.
-Term-weighting approaches in automatic text retrieval.
-\textit{Information Processing \& Management}, 24(5):513--523, 1988.
-doi:10.1016/0306-4573(88)90021-0.
-
-\bibitem{mccallum1998naive}
-A.~McCallum and K.~Nigam.
-A comparison of event models for Naive Bayes text classification.
-In \textit{AAAI-98 Workshop on Learning for Text Categorization}, pp.~41--48, 1998.
-
-\bibitem{breiman2001random}
-L.~Breiman.
-Random forests.
-\textit{Machine Learning}, 45:5--32, 2001.
-doi:10.1023/A:1010933404324.
-
-\bibitem{chen2016xgboost}
-T.~Chen and C.~Guestrin.
-XGBoost: a scalable tree boosting system.
-In \textit{Proc.\ 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
-pp.~785--794, 2016.
-doi:10.1145/2939672.2939785.
-
-\bibitem{karimi2017automatic}
-S.~Karimi, X.~Dai, H.~Hassanzadeh, and A.~Nguyen.
-Automatic diagnosis coding of radiology reports: a comparison of deep learning and conventional classification methods.
-In \textit{Proc.\ BioNLP 2017 Workshop}, 2017.
-
-\bibitem{mikolov2013efficient}
-T.~Mikolov, K.~Chen, G.~Corrado, and J.~Dean.
-Efficient estimation of word representations in vector space.
-In \textit{International Conference on Learning Representations (ICLR)}, 2013.
-
-\bibitem{pennington2014glove}
-J.~Pennington, R.~Socher, and C.~D.~Manning.
-GloVe: global vectors for word representation.
-In \textit{Proc.\ 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
-pp.~1532--1543, 2014.
-doi:10.3115/v1/D14-1162.
-
-\bibitem{artetxe2023revisiting}
-M.~Artetxe, V.~Goswami, S.~Bhosale, A.~Fan, and L.~Zettlemoyer.
-Revisiting machine translation for cross-lingual classification.
-In \textit{Proc.\ 2023 Conference on Empirical Methods in Natural Language Processing},
-pp.~6489--6499, 2023.
-doi:10.18653/v1/2023.emnlp-main.399.
-
-\bibitem{papaioannou2022cross}
-J.~M.~Papaioannou, P.~Grundmann, B.~van Aken, A.~Samaras, I.~Kyparissidis,
-G.~Giannakoulas, et al.
-Cross-lingual knowledge transfer for clinical phenotyping.
-In \textit{Proc.\ 13th International Conference on Language Resources and Evaluation (LREC)}, 2022.
-
-\bibitem{chawla2002smote}
-N.~V.~Chawla, K.~W.~Bowyer, L.~O.~Hall, and W.~P.~Kegelmeyer.
-SMOTE: synthetic minority over-sampling technique.
-\textit{Journal of Artificial Intelligence Research}, 16:321--357, 2002.
-doi:10.1613/jair.953.
-
-\bibitem{lin2017focal}
-T.-Y.~Lin, P.~Goyal, R.~Girshick, K.~He, and P.~Doll\'{a}r.
-Focal loss for dense object detection.
-In \textit{Proc.\ IEEE International Conference on Computer Vision (ICCV)},
-pp.~2980--2988, 2017.
-doi:10.1109/ICCV.2017.324.
-
-\bibitem{saito2015precision}
-T.~Saito and M.~Rehmsmeier.
-The precision-recall plot is more informative than the ROC plot when evaluating binary classifiers on imbalanced datasets.
-\textit{PLOS ONE}, 10(3):e0118432, 2015.
-doi:10.1371/journal.pone.0118432.
-
-\bibitem{sokolova2009systematic}
-M.~Sokolova and G.~Lapalme.
-A systematic analysis of performance measures for classification tasks.
-\textit{Information Processing \& Management}, 45(4):427--437, 2009.
-doi:10.1016/j.ipm.2009.03.002.
 
 \end{thebibliography}
 
