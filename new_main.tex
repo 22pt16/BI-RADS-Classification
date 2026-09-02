@@ -447,10 +447,9 @@ Figure~\ref{fig:ngram_pipeline} summarises the class-wise language-model constru
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{figures/ngram__classifier.png}
-\caption{Two-phase N-gram classification approach. Phase 1 (top) builds one
-         Kneser-Ney smoothed language model per BI-RADS class from the
-         training partition. Phase 2 (bottom) scores an unseen report
-         against all seven class models and applies the MAP decision rule.}
+\caption{Overall pipeline of the two-phase N-gram model classification approach. Phase 1 (top) constructs class-specific Kneser-Ney smoothed language
+models for BI-RADS categories (0-6). Phase 2 (bottom) computes the likelihood of a new report under each class model, applies Bayes' rule, and assigns the class
+with the highest posterior probability (MAP decision).}
 \label{fig:ngram_pipeline}
 \end{figure}
 
