@@ -504,12 +504,9 @@ rather than initialised from pre-trained vectors such as word2vec~\cite{mikolov2
 or GloVe~\cite{pennington2014glove}; we return to this design choice, and the
 possibility of using pre-trained embeddings, in Section~\ref{sec:strengths}.
 
-The recurrent block differs per architecture:
-\begin{itemize}
-  \item \textbf{RNN}: \texttt{SimpleRNN(128)}
-  \item \textbf{LSTM}: \texttt{LSTM(128)}
-  \item \textbf{BiLSTM}: \texttt{Bidirectional(LSTM(128))}
-\end{itemize}
+The recurrent block differs per architecture: the RNN model uses
+\texttt{SimpleRNN(128)}, the LSTM model uses \texttt{LSTM(128)}, and the
+BiLSTM model uses \texttt{Bidirectional(LSTM(128))}.
 
 \textbf{Training hyperparameters.}
 Adam optimiser ($\text{lr} = 10^{-3}$), categorical cross-entropy loss,
@@ -523,20 +520,17 @@ Model weights are saved under \texttt{models/deep\_learning/} as
 
 \subsubsection{Setup}
 
-\begin{itemize}
-  \item \textbf{Data split:} Stratified 70/15/15 train/val/test
-        (Table~\ref{tab:splits}).
-  \item \textbf{Hyperparameters:} As described in
-        Section~\ref{sec:model_construction}.
-  \item \textbf{Evaluation measures:} Test-set Accuracy, Macro Precision,
-        Macro Recall, Macro F1, Weighted F1.
-    Macro averaging treats each class equally (critical for minority BI-RADS
-    detection); weighted averaging reflects real-world class frequency. This
-    macro/weighted distinction, and its importance under class imbalance, is
-    discussed at length by Sokolova and Lapalme~\cite{sokolova2009systematic}.
-  \item \textbf{Evaluation split:} All final numbers are reported on the
-        held-out test set (1{,}377 reports).
-\end{itemize}
+The data split follows the stratified 70/15/15 train/validation/test
+partition described in Table~\ref{tab:splits}, and hyperparameters for each
+model family are as described in Section~\ref{sec:model_construction}.
+Evaluation is carried out on the test-set predictions using Accuracy, Macro
+Precision, Macro Recall, Macro F1, and Weighted F1. Macro averaging treats
+each class equally, which is critical for surfacing minority-BI-RADS
+performance, whereas weighted averaging reflects real-world class frequency;
+this macro/weighted distinction, and its importance under class imbalance, is
+discussed at length by Sokolova and Lapalme~\cite{sokolova2009systematic}.
+All final numbers reported below come from the held-out test set of
+1{,}377 reports.
 
 \subsubsection{Results}
 \label{sec:results}
@@ -860,65 +854,62 @@ enough to run over the whole test set in a few seconds.
 \subsection{Pros}
 \label{sec:strengths}
 
-\begin{itemize}
-  \item Modular, reproducible pipeline with deterministic tokenisation,
-        vocabulary, splits, and evaluation.
-  \item Three model families compared under a unified protocol.
-  \item N-gram models provide human-inspectable class language statistics
-        and calibrated MAP scores.
-  \item Logistic Regression with balanced class weights offers the best
-        macro-averaged F1 without GPU infrastructure.
-  \item Deep learning models (LSTM, BiLSTM) achieve the highest accuracy and
-        are readily extendable to pre-trained embeddings such as
-        word2vec~\cite{mikolov2013efficient} or GloVe~\cite{pennington2014glove},
-        or to pre-trained clinical language models such as
-        ClinicalBERT~\cite{alsentzer2019publicly}.
-\end{itemize}
+The pipeline is modular and reproducible, with deterministic tokenisation,
+vocabulary construction, data splits, and evaluation throughout, and it
+compares three model families under a single, unified protocol rather than
+evaluating them in isolation. The N-gram models bring the added benefit of
+being human-inspectable: their class language statistics and calibrated MAP
+scores can be examined directly, which is not something the other two
+families offer as naturally. Among the classical models, Logistic Regression
+with balanced class weights offers the best macro-averaged F1 without
+requiring any GPU infrastructure, making it an attractive option where
+compute is limited. The deep learning models, LSTM and BiLSTM in particular,
+achieve the highest raw accuracy of any family tested, and are readily
+extendable to pre-trained embeddings such as word2vec~\cite{mikolov2013efficient}
+or GloVe~\cite{pennington2014glove}, or to pre-trained clinical language
+models such as ClinicalBERT~\cite{alsentzer2019publicly}.
 
 \subsection{Limitations}
 
-\begin{itemize}
-  \item \textbf{Severe class imbalance.} Categories~5 and~6 have only 20 and
-        32 training samples respectively, causing all models to achieve zero
-        or near-zero F1 on these classes.
-  \item \textbf{Translation quality.} Machine-translated text may introduce
-        artefacts; quality was assessed only by spot-check on 50 reports.
-  \item \textbf{Residual leakage.} 181 reports retain partial BI-RADS cue
-        words post-cleaning.
-  \item \textbf{No transformer models.} Models such as
-        ClinicalBERT~\cite{alsentzer2019publicly} were not evaluated in this
-        study.
-  \item \textbf{Single language pair.} The paradigm has been validated only for
-        Portuguese$\to$English; the broader translate-test literature (e.g.
-        \cite{artetxe2023revisiting,papaioannou2022cross}) suggests results
-        may not transfer directly to other language pairs.
-\end{itemize}
+Several limitations temper these results. Class imbalance remains severe:
+Categories~5 and~6 have only 20 and 32 training samples respectively, which
+causes all models to achieve zero or near-zero F1 on these classes.
+Translation quality is another open question, since machine-translated text
+may introduce artefacts and quality was assessed only by a spot-check on 50
+reports rather than a systematic audit. A degree of residual leakage also
+remains, with 181 reports retaining partial BI-RADS cue words even after
+cleaning. No transformer-based models were evaluated in this study, so
+models such as ClinicalBERT~\cite{alsentzer2019publicly} are absent from the
+comparison. Finally, the translate-then-classify paradigm has been validated
+only for the Portuguese$\to$English pair used here; the broader
+translate-test literature (e.g.\ \cite{artetxe2023revisiting,papaioannou2022cross})
+suggests these results may not transfer directly to other language pairs.
 
 % ============================================================
 \section{Future Scope}
 % ============================================================
 
-\begin{itemize}
-  \item \textbf{Transformer fine-tuning.} Fine-tuning ClinicalBERT~\cite{alsentzer2019publicly},
-        BioBERT, or a Portuguese clinical BERT directly on original Portuguese text.
-  \item \textbf{Multilingual models.} Applying mBERT or XLM-R to raw
-        Portuguese reports to eliminate translation noise, in the spirit of
-        the cross-lingual transfer strategies studied by Papaioannou et
-        al.~\cite{papaioannou2022cross} and the translate-test analysis of
-        Artetxe et al.~\cite{artetxe2023revisiting}.
-  \item \textbf{Class imbalance mitigation.} Oversampling with
-        SMOTE~\cite{chawla2002smote}, focal loss~\cite{lin2017focal},
-        or data augmentation for minority BI-RADS categories (4, 5, 6).
-  \item \textbf{N-gram + ML ensemble.} Combining MAP log-posterior scores from
-        the N-gram model with TF-IDF features as input to a meta-classifier.
-  \item \textbf{Explainability.} Extending SHAP/LIME analyses to identify
-        which clinical phrases most drive each BI-RADS prediction.
-  \item \textbf{Temporal validation.} Evaluating robustness across different
-        acquisition years, hospitals, and radiologist writing styles.
-  \item \textbf{Multi-modal integration.} Combining report text with
-        image-derived mammographic features, in the spirit of image-based
-        mammography models such as~\cite{yala2019deep}, in a joint model.
-\end{itemize}
+A number of directions could extend this work. One is transformer
+fine-tuning: fine-tuning ClinicalBERT~\cite{alsentzer2019publicly}, BioBERT,
+or a Portuguese clinical BERT directly on the original Portuguese text,
+rather than on translated English. Related to this is the possibility of
+multilingual models, applying mBERT or XLM-R to raw Portuguese reports to
+eliminate translation noise altogether, in the spirit of the cross-lingual
+transfer strategies studied by Papaioannou et al.~\cite{papaioannou2022cross}
+and the translate-test analysis of Artetxe et al.~\cite{artetxe2023revisiting}.
+Class imbalance mitigation is another natural next step, whether through
+oversampling with SMOTE~\cite{chawla2002smote}, focal
+loss~\cite{lin2017focal}, or data augmentation targeted at the minority
+BI-RADS categories (4, 5, 6). A further avenue is an N-gram plus ML ensemble
+that combines MAP log-posterior scores from the N-gram model with TF-IDF
+features as input to a meta-classifier. Explainability work could extend
+SHAP/LIME analyses to identify which clinical phrases most drive each
+BI-RADS prediction, while temporal validation could evaluate robustness
+across different acquisition years, hospitals, and radiologist writing
+styles. Finally, multi-modal integration could combine report text with
+image-derived mammographic features, in the spirit of image-based
+mammography models such as~\cite{yala2019deep}, within a single joint
+model.
 
 % ============================================================
 %  References
