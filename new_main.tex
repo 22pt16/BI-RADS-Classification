@@ -280,33 +280,35 @@ al.~\cite{papaioannou2022cross} for non-English clinical phenotyping.
 \section{Problem Statement}
 % ============================================================
 
-\subsection{Given}
-
-\begin{itemize}
-  \item A corpus of free-text Portuguese mammography reports, each associated
-        with a ground-truth BI-RADS category label in $\{0, 1, 2, 3, 4, 5, 6\}$.
-  \item Machine-translated English versions of each report.
-  \item A class-stratified 70/15/15 train/validation/test partition of
-        $n = 9{,}179$ reports.
-\end{itemize}
-
-\subsection{Objective}
-
-Construct a set of NLP models----(i) class-conditional N-gram language models
-with Kneser-Ney smoothing and MAP inference, (ii) bag-of-words discriminative
-classifiers, and (iii) deep recurrent neural networks---to automatically predict
-the BI-RADS category of a mammography report from its translated and
-preprocessed text, and compare their performance under a unified evaluation
-protocol using accuracy, macro-averaged F1, and weighted F1 on the held-out
-test set. Because macro and weighted F1 can rank models very differently under
-severe class imbalance, we report both throughout, following the guidance on
-evaluation-measure choice for imbalanced classification tasks given by
-Sokolova and Lapalme~\cite{sokolova2009systematic} and by Saito and
+We work with a corpus of free-text Portuguese mammography reports, each
+associated with a ground-truth BI-RADS category label in $\{0, 1, 2, 3, 4,
+5, 6\}$, together with machine-translated English versions of each report,
+partitioned into a class-stratified 70/15/15 train/validation/test split of
+$n = 9{,}179$ reports. The objective is to construct a set of NLP
+models----(i) class-conditional N-gram language models with Kneser-Ney
+smoothing and MAP inference, (ii) bag-of-words discriminative classifiers,
+and (iii) deep recurrent neural networks---to automatically predict the
+BI-RADS category of a mammography report from its translated and
+preprocessed text, and to compare their performance under a unified
+evaluation protocol using accuracy, macro-averaged F1, and weighted F1 on
+the held-out test set. Because macro and weighted F1 can rank models very
+differently under severe class imbalance, we report both throughout,
+following the guidance on evaluation-measure choice for imbalanced
+classification tasks given by Sokolova and
+Lapalme~\cite{sokolova2009systematic} and by Saito and
 Rehmsmeier~\cite{saito2015precision}.
 
 % ============================================================
 \section{Proposed Work}
 % ============================================================
+
+This section describes the full experimental pipeline in four stages: data
+collection and quality auditing, clinical-domain-aware preprocessing, model
+construction across the three families introduced above (N-gram language
+models, classical ML, and deep learning), and the experimental protocol used
+to compare them. All stages operate on the same stratified 70/15/15 split
+described in the Problem Statement and are implemented to be fully
+reproducible.
 
 \subsection{Data Collection}
 
