@@ -82,6 +82,11 @@ on raw accuracy (90.27\%) with a comparable weighted F1 (89.88\%).
 The Kneser-Ney bigram model, despite being by far the simplest of the three
 families, reached 85.69\% accuracy and a macro F1 of 0.594 in just 4.66 seconds
 over the entire test set---outperforming both the unigram and trigram variants.
+We further provide an explainability analysis of the best deep learning model
+(LSTM), combining per-class F1 attribution, ROC curves (macro AUC = 0.971),
+prediction confidence profiling, and qualitative SHAP and LIME token-level
+attributions. These analyses confirm that the LSTM's predictions are driven
+primarily by measurement expressions, negation tokens, and laterality terms.
 Taken together, the results suggest that a lightweight N-gram model is a
 perfectly reasonable baseline for this kind of clinical text classification,
 and that the gains from moving to discriminative classifiers or recurrent
@@ -133,6 +138,12 @@ This paper's contributions are as follows.
         and evaluated on an identical test split.
   \item A comprehensive comparison across all three tiers on the same
         stratified 70/15/15 split, enabling fair head-to-head ranking.
+  \item An explainability analysis of the best deep learning model (LSTM)
+        covering per-class F1 attribution, macro-averaged ROC curves
+        (AUC = 0.971), prediction confidence calibration, and qualitative
+        SHAP and LIME token-level attributions, confirming that measurement
+        expressions, negation tokens, and laterality terms are the
+        primary drivers of LSTM predictions.
 \end{enumerate}
 
 % ============================================================
@@ -298,6 +309,57 @@ classification tasks given by Sokolova and
 Lapalme~\cite{sokolova2009systematic} and by Saito and
 Rehmsmeier~\cite{saito2015precision}.
 
+Figure~\ref{fig:pipeline} illustrates the end-to-end system architecture.
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[
+  box/.style={
+    rectangle, rounded corners=4pt,
+    draw=blue!70, fill=blue!8, thick,
+    minimum width=2.8cm, minimum height=0.85cm,
+    align=center, font=\small
+  },
+  arrow/.style={-{Stealth[length=7pt]}, thick, blue!60}
+]
+
+% ---- Top row ----
+\node[box] (raw)   at (0,0)     {Portuguese\\Reports};
+\node[box] (trans) at (3.5,0)   {Translation\\(PT$\to$EN)};
+\node[box] (pre)   at (7.0,0)   {Clinical\\Preprocessing};
+\node[box] (split) at (10.5,0)  {70/15/15\\Split};
+
+% ---- Model row ----
+\node[box, fill=orange!12, draw=orange!70]
+             (ngram) at (1.8,-2.4) {N-gram LMs\\(Kneser-Ney)};
+\node[box, fill=green!12, draw=green!70]
+             (ml)    at (5.8,-2.4) {Classical ML\\(TF-IDF/BoW)};
+\node[box, fill=red!12, draw=red!70]
+             (dl)    at (9.8,-2.4) {Deep Learning\\(RNN/LSTM/BiLSTM)};
+
+% ---- Evaluation row ----
+\node[box, fill=gray!10, draw=gray!60]
+             (eval)  at (5.8,-4.5) {Evaluation\\(Acc, Macro F1, Wt F1)};
+
+% ---- Arrows ----
+\draw[arrow] (raw)   -- (trans);
+\draw[arrow] (trans) -- (pre);
+\draw[arrow] (pre)   -- (split);
+
+\draw[arrow] (split.south) |- ++(0,-0.75) -| (ngram.north);
+\draw[arrow] (split.south) |- ++(0,-0.75) -| (ml.north);
+\draw[arrow] (split.south) |- ++(0,-0.75) -| (dl.north);
+
+\draw[arrow] (ngram.south) |- ++(0,-0.4) -| (eval.north);
+\draw[arrow] (ml.south)    -- (eval.north);
+\draw[arrow] (dl.south)    |- ++(0,-0.4) -| (eval.north);
+
+\end{tikzpicture}
+\caption{End-to-end pipeline for BI-RADS classification from translated
+         mammography reports.}
+\label{fig:pipeline}
+\end{figure}
+
 % ============================================================
 \section{Proposed Work}
 % ============================================================
@@ -448,7 +510,7 @@ Figure~\ref{fig:ngram_pipeline} summarises the class-wise language-model constru
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=\textwidth]{figures/ngram__classifier.png}
+\includegraphics[width=\textwidth]{figures/ngram_classifier.jpeg}
 \caption{Overall pipeline of the two-phase N-gram model classification approach. Phase 1 (top) constructs class-specific Kneser-Ney smoothed language
 models for BI-RADS categories (0-6). Phase 2 (bottom) computes the likelihood of a new report under each class model, applies Bayes' rule, and assigns the class
 with the highest posterior probability (MAP decision).}
@@ -759,6 +821,84 @@ Category~4 entirely, which suggests its gating-free recurrence just isn't
 expressive enough for the more nuanced language used to describe suspicious
 findings.
 
+\textbf{LSTM explainability analysis.}
+As the best-performing deep learning model on raw accuracy (90.3\%), the LSTM
+warrants a closer look at how that performance is distributed across BI-RADS
+categories and how confident its predictions are.
+Figure~\ref{fig:lstm_per_class_f1} shows the per-class F1 scores for all
+three recurrent architectures.
+The LSTM achieves near-perfect F1 for Category~2 (0.97), which is expected
+given that over 80\% of the test set belongs to this class.
+For Categories~0 and~1, the LSTM reaches 0.77 and 0.85 F1 respectively,
+outsperforming the RNN on both while remaining slightly behind the BiLSTM on
+Category~0.
+The most clinically significant gap is at Categories~3 and~4: the LSTM reaches
+F1 scores of 0.54 and 0.59 respectively, substantially better than the plain
+RNN (0.41 and~0.00) and comparable to the BiLSTM, showing that gated recurrence
+is essential for capturing the nuanced language distinguishing
+``probably benign'' from ``suspicious'' findings.
+Beyond per-class F1, the macro-averaged ROC analysis
+(Figure~\ref{fig:lstm_roc}) reveals that the LSTM achieves an overall AUC of
+0.971, the highest among the three architectures (BiLSTM: 0.966, RNN: 0.949),
+indicating that the LSTM's posterior probability scores discriminate between
+BI-RADS categories well even for classes where hard predictions fail.
+Finally, the prediction confidence analysis
+(Figure~\ref{fig:lstm_confidence}) shows a clear separation between the
+LSTM's correct and incorrect predictions: correctly classified reports are
+assigned maximum softmax probabilities tightly clustered near 1.0
+(interquartile range 0.97--1.0), whereas incorrectly classified reports have
+a much wider spread (IQR approximately 0.58--0.89).
+This gap---absent in the RNN but partially present in the BiLSTM---suggests
+that for the LSTM, a low maximum class probability can serve as a practical
+confidence flag to route uncertain reports for radiologist review.
+Explainability analysis using SHAP (Shapley Additive exPlanations, using
+\texttt{shap.Explainer} with a text masker) was applied to three representative
+test reports, producing token-level attributions for each BI-RADS class
+probability. The resulting SHAP text plots confirm that the LSTM attends most
+strongly to measurement expressions (e.g., ``2.5 cm'', ``3$\times$2 cm''),
+negation tokens (``no mass'', ``without calcification''), and laterality terms
+(``right breast'', ``bilateral'')---precisely the tokens preserved by the
+clinically-aware preprocessing pipeline---while treating generic connector
+words as near-zero contributors. LIME (Local Interpretable Model-agnostic
+Explanations) analysis, applied with 15 top influential words per instance,
+corroborated these findings, with terms such as ``nodule'', ``irregular'',
+and ``calcification'' driving predictions toward higher-risk BI-RADS
+categories and words like ``no'', ``normal'', and ``benign finding'' anchoring
+predictions at Category~2.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{figures/lstm_per_class_f1.png}
+\caption{Per-class F1 score comparison across the three recurrent architectures
+(RNN, LSTM, BiLSTM) on the held-out test set. The LSTM achieves the highest
+F1 for the majority class (Category~2: 0.97) and competitive scores for the
+clinically important Categories~3 and~4, while all three models score zero
+on the severely underrepresented Categories~5 and~6.}
+\label{fig:lstm_per_class_f1}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/lstm_roc_curves.png}
+\caption{Macro-averaged multiclass ROC curves for the three deep learning
+models. The LSTM attains the highest AUC (0.971), confirming that its
+posterior probabilities provide strong BI-RADS class discrimination even
+for classes where hard classification fails.}
+\label{fig:lstm_roc}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/lstm_prediction_confidence.png}
+\caption{Prediction confidence (maximum softmax probability) for correct
+vs.\ incorrect predictions across the three deep learning models. The LSTM
+shows the clearest separation: correctly classified reports cluster near
+probability~1.0, while incorrectly classified reports have a substantially
+wider spread, suggesting that the LSTM's confidence score is a usable
+proxy for prediction reliability.}
+\label{fig:lstm_confidence}
+\end{figure}
+
 \textbf{Putting the three families side by side}, a few things stand out.
 Classical discriminative classifiers win on weighted F1, mostly because they
 handle the dominant Category~2 so well; Logistic Regression, specifically,
@@ -772,59 +912,6 @@ the deep learning models, despite topping the accuracy leaderboard, post a
 noticeably lower macro F1 than Logistic Regression, which is really just
 another way of saying they are leaning hard on the majority class rather than
 learning the minority categories.
-
-\subsubsection{Conclusion of Section}
-
-Figure~\ref{fig:pipeline} illustrates the end-to-end system architecture.
-
-\begin{figure}[h!]
-\centering
-\begin{tikzpicture}[
-  box/.style={
-    rectangle, rounded corners=4pt,
-    draw=blue!70, fill=blue!8, thick,
-    minimum width=2.8cm, minimum height=0.85cm,
-    align=center, font=\small
-  },
-  arrow/.style={-{Stealth[length=7pt]}, thick, blue!60}
-]
-
-% ---- Top row ----
-\node[box] (raw)   at (0,0)     {Portuguese\\Reports};
-\node[box] (trans) at (3.5,0)   {Translation\\(PT$\to$EN)};
-\node[box] (pre)   at (7.0,0)   {Clinical\\Preprocessing};
-\node[box] (split) at (10.5,0)  {70/15/15\\Split};
-
-% ---- Model row ----
-\node[box, fill=orange!12, draw=orange!70]
-             (ngram) at (1.8,-2.4) {N-gram LMs\\(Kneser-Ney)};
-\node[box, fill=green!12, draw=green!70]
-             (ml)    at (5.8,-2.4) {Classical ML\\(TF-IDF/BoW)};
-\node[box, fill=red!12, draw=red!70]
-             (dl)    at (9.8,-2.4) {Deep Learning\\(RNN/LSTM/BiLSTM)};
-
-% ---- Evaluation row ----
-\node[box, fill=gray!10, draw=gray!60]
-             (eval)  at (5.8,-4.5) {Evaluation\\(Acc, Macro F1, Wt F1)};
-
-% ---- Arrows ----
-\draw[arrow] (raw)   -- (trans);
-\draw[arrow] (trans) -- (pre);
-\draw[arrow] (pre)   -- (split);
-
-\draw[arrow] (split.south) |- ++(0,-0.75) -| (ngram.north);
-\draw[arrow] (split.south) |- ++(0,-0.75) -| (ml.north);
-\draw[arrow] (split.south) |- ++(0,-0.75) -| (dl.north);
-
-\draw[arrow] (ngram.south) |- ++(0,-0.4) -| (eval.north);
-\draw[arrow] (ml.south)    -- (eval.north);
-\draw[arrow] (dl.south)    |- ++(0,-0.4) -| (eval.north);
-
-\end{tikzpicture}
-\caption{End-to-end pipeline for BI-RADS classification from translated
-         mammography reports.}
-\label{fig:pipeline}
-\end{figure}
 
 % ============================================================
 \section{Conclusion}
@@ -901,9 +988,11 @@ oversampling with SMOTE~\cite{chawla2002smote}, focal
 loss~\cite{lin2017focal}, or data augmentation targeted at the minority
 BI-RADS categories (4, 5, 6). A further avenue is an N-gram plus ML ensemble
 that combines MAP log-posterior scores from the N-gram model with TF-IDF
-features as input to a meta-classifier. Explainability work could extend
-SHAP/LIME analyses to identify which clinical phrases most drive each
-BI-RADS prediction, while temporal validation could evaluate robustness
+features as input to a meta-classifier. Building on the SHAP and LIME
+explainability analyses conducted for the LSTM in this work, a natural next
+step is to extend token-level attribution to all model families and to
+aggregate attributions across the full test set to produce class-level feature
+importance rankings, while temporal validation could evaluate robustness
 across different acquisition years, hospitals, and radiologist writing
 styles. Finally, multi-modal integration could combine report text with
 image-derived mammographic features, in the spirit of image-based
