@@ -1,0 +1,32 @@
+{
+    "RNN": {
+        "Accuracy": 0.8721859114015976,
+        "Precision_macro": 0.3944161980231119,
+        "Recall_macro": 0.4326688105518368,
+        "F1_macro": 0.4114336354843847,
+        "Precision_weighted": 0.8512662180254836,
+        "Recall_weighted": 0.8721859114015976,
+        "F1_weighted": 0.8607866232195222,
+        "ROC_AUC_macro": 0.9486510307714919
+    },
+    "LSTM": {
+        "Accuracy": 0.9026870007262164,
+        "Precision_macro": 0.5303112260307229,
+        "Recall_macro": 0.5326361454182132,
+        "F1_macro": 0.5308769338978819,
+        "Precision_weighted": 0.8951572075316854,
+        "Recall_weighted": 0.9026870007262164,
+        "F1_weighted": 0.8987679352858452,
+        "ROC_AUC_macro": 0.9712017651690175
+    },
+    "BiLSTM": {
+        "Accuracy": 0.8983297022512708,
+        "Precision_macro": 0.5245356795822615,
+        "Recall_macro": 0.544874517648923,
+        "F1_macro": 0.5344115642314131,
+        "Precision_weighted": 0.8942497645556408,
+        "Recall_weighted": 0.8983297022512708,
+        "F1_weighted": 0.8961722646369166,
+        "ROC_AUC_macro": 0.9656044597734669
+    }
+}
