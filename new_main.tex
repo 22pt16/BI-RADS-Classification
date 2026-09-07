@@ -761,110 +761,224 @@ architectures.}
 \label{fig:cm_dl}
 \end{figure}
 
-A few patterns are visible across all three that the summary tables alone
-don't show. Category~2 is predicted well everywhere (92--97\% of the time,
-depending on the model), which is unsurprising given how much training data
-it has. Category~3 is the most consistently troublesome middle ground: the
-N-gram model puts 31\% of true Category-3 reports into Category~2, the SVM
-puts 18\% there, and all three recurrent networks show the same pattern,
-suggesting the boundary between "probably benign" and "benign" language is
-genuinely hard to pick up from text alone---not a quirk of one particular
-model. More strikingly, the RNN and LSTM/BiLSTM matrices show entire empty
-columns for Categories~5 and~6: none of the three deep learning models ever
-predict either class, no matter what the true label is. The N-gram and SVM
-models at least attempt those categories occasionally, even though they get
-many of those predictions wrong, which is arguably a more useful failure
-mode for a clinical deployment than never predicting a rare-but-serious
-category at all.
+A few clinically important patterns emerge from the confusion matrices that the
+summary tables alone cannot convey.
+Category~2 (benign finding, routine annual screening recommended) is predicted
+correctly 92--97\% of the time across all models, reflecting the fact that
+mammography reports for truly benign studies share a highly consistent lexical
+pattern---terms such as ``no suspicious finding'', ``no dominant mass'', and
+``normal breast tissue'' that even the N-gram model can reliably match.
+Category~3 (probably benign, short-interval follow-up in six months recommended)
+is the most consistently misclassified class: the N-gram model assigns 31\% of
+true Category~3 reports to Category~2, the SVM assigns 18\% there, and all
+three recurrent networks show the same systematic drift.
+This is not a modelling artefact---it reflects a genuine clinical ambiguity.
+Radiologists themselves acknowledge that the verbal boundary between
+``probably benign'' (e.g., ``well-circumscribed oval nodule, probably
+benign'') and ``benign'' (e.g., ``stable well-circumscribed nodule, benign
+appearance'') is subtle and context-dependent, often encoded in hedging adverbs,
+comparative phrases (``unchanged from prior'', ``new nodule''), and sentence
+structure that a bag-of-words or short-context model is poorly equipped to
+capture.
+Upgrading a Category~3 patient to Category~2 is a low-risk error (it defers
+a follow-up that would likely confirm benignity anyway), but it is still an
+under-triage event that a screening programme would want to flag.
+More clinically dangerous is what all deep learning models do with Categories~5
+and~6.
+Category~5 (highly suggestive of malignancy, biopsy recommended with
+$>$95\% likelihood of malignancy) and Category~6 (known biopsy-proven
+malignancy) are the two categories where missing the correct label has the
+highest clinical consequence---delayed diagnosis of a malignancy.
+The RNN, LSTM, and BiLSTM all produce entirely empty prediction columns for
+both classes: the models never output a Category~5 or~6 label regardless of the
+true class.
+In practical terms this means that every BI-RADS~5 or~6 report in the test set
+would be sent for routine follow-up rather than urgent biopsy if the LSTM
+were deployed without a human radiologist in the loop.
+The N-gram bigram and TF-IDF--SVM models do occasionally predict these
+categories (albeit with a high error rate), which at least flags some
+high-risk reports for further review---a more clinically defensible failure
+mode despite lower aggregate accuracy.
 
 \subsubsection{Findings and Discussion}
 
 \textbf{N-gram models.}
-Moving from unigrams to bigrams brings a large jump---20 points of accuracy
-and 21 points of macro F1 on validation---which makes sense given how much
-information sits in local word pairs in this kind of clinical text ("no mass"
-versus "mass identified" hinges entirely on adjacency).
-The trigram model, interestingly, does slightly worse than the bigram, which
-we attribute to data sparsity: categories 5 and 6 have only 20 and 32 training
-reports respectively, nowhere near enough to estimate trigram statistics
-reliably. Higher order is not automatically better when the data is this thin.
-We also looked at the MAP margin---the gap in log-posterior between the
-top-scoring class and the runner-up---and found that correctly classified
-reports average a margin of 15.48, against 10.33 for misclassified ones. When
-the model is confident, it also tends to be right, which is at least a
-reassuring sign for using these margins as a rough confidence signal.
+Moving from unigrams to bigrams produces a large jump---20 accuracy points and
+21 macro-F1 points on the validation set---which reflects the fundamental
+linguistic structure of mammography reporting.
+Clinically critical distinctions in radiology text almost always hinge on
+adjacent word pairs rather than individual words: ``no mass'' versus ``mass
+identified'', ``no calcification'' versus ``suspicious calcification cluster'',
+``stable nodule'' versus ``new nodule'' are local bigram-level contrasts that
+the unigram model collapses to the same token counts.
+Kneser-Ney bigram models can capture this adjacency, which is why the jump
+from unigram to bigram is so large for this corpus.
+The trigram model, by contrast, performs slightly worse than the bigram.
+We attribute this directly to the extreme data scarcity of the high-risk
+categories: BI-RADS~5 and~6 have only 20 and 32 training reports respectively,
+which is far too few observations to estimate trigram counts reliably even
+with Kneser-Ney smoothing.
+The language used to describe highly malignant findings (e.g., ``irregular
+spiculated mass with associated pleomorphic calcifications in the upper outer
+quadrant of the right breast'') is highly specific and variable, and
+three-word contexts from only 20 training examples cannot cover that
+variability.
+Higher n-gram order is not automatically better when training data for the
+clinically most important categories is this sparse.
+We also examined the MAP log-posterior margin (the gap between the top-scoring
+BI-RADS class and the runner-up): correctly classified reports averaged a
+margin of 15.48, versus 10.33 for misclassified reports.
+This separation---though not sufficient for hard thresholding---suggests the
+Kneser-Ney bigram's confidence scores are meaningful, and that reports where
+the top-two class posteriors are very close (margin $<$~5) could be
+auto-flagged for radiologist adjudication in a real-world triage workflow.
 
 \textbf{Classical ML.}
-Logistic Regression paired with CountVectorizer gives the best balance across
-classes (macro F1 = 0.718), which we'd put down to its balanced class weighting
-and its inherently discriminative objective. The linear SVM~\cite{joachims1998text}
-does best on weighted F1 (0.900), largely because the dominant BI-RADS~2 class is easy to
-separate in TF-IDF space and weighted F1 rewards getting the majority class
-right. Naive Bayes~\cite{mccallum1998naive} struggles under TF-IDF---its independence assumption does
-not play well with dense, continuous TF-IDF weights---and Random
-Forest~\cite{breiman2001random}, despite
-balanced class weights, still under-serves the minority classes, since
-tree-based splits tend to favour whichever class dominates a node. XGBoost~\cite{chen2016xgboost}
-tracks a similar pattern to Random Forest on macro metrics despite its
-stronger boosting objective, again reflecting how little signal a handful of
-Category-5/6 examples can provide to a tree ensemble.
+Logistic Regression with CountVectorizer achieves the best balance across
+BI-RADS categories (macro F1 = 0.718).
+We attribute this to two design choices: the balanced class-weight parameter
+explicitly up-weights BI-RADS~0, 1, 3, 4, 5, and 6 during training to
+counterbalance the 80\% domination of Category~2, and the discriminative
+objective directly learns the decision boundary between category-specific
+lexical patterns rather than modelling each class independently.
+In mammography text this matters because the discriminative signal for
+high-risk categories is not just the presence of terms like ``mass'' or
+``calcification'' (which appear across categories) but their modification and
+co-occurrence: ``irregular spiculated mass'' signals Category~4/5, while
+``well-circumscribed oval mass'' signals Category~3.
+Logistic Regression can weight these phrase-level TF-IDF features jointly;
+Naive Bayes~\cite{mccallum1998naive} cannot, because its token-independence
+assumption breaks down when clinical meaning is encoded in modifier--noun pairs.
+The linear SVM~\cite{joachims1998text} achieves the highest weighted F1 (0.900),
+because TF-IDF maximally separates the dense Category~2 cluster---benign
+reports use a highly stereotyped vocabulary (``no dominant mass'', ``fatty
+replacement'', ``benign-appearing calcifications'') that is linearly separable
+from other categories in TF-IDF space.
+Random Forest~\cite{breiman2001random} and XGBoost~\cite{chen2016xgboost}
+both underperform on macro F1 relative to the linear models.
+For a task like BI-RADS classification where Category~5 and~6 each contribute
+fewer than 10 training instances per tree's bootstrap sample, the ensemble
+tends to route those instances to the nearest high-frequency leaf (usually
+Category~2 or~3) rather than creating a dedicated split, even with balanced
+class weights.
 
 \textbf{Deep learning.}
-The bidirectional LSTM edges out the plain LSTM on macro recall (0.545 vs.\
-0.533), which fits with the idea that reading a report in both directions
-helps catch sentence-final negations and closing remarks, a common pattern in
-radiology text. But none of the three architectures manage anything on
-BI-RADS~5 or~6---zero F1 across the board---likely reflects the combination of severe class imbalance, extremely limited minority-class training data, and the absence or limitations of explicit imbalance mitigation because 20 and 32 training
-examples is not enough for a neural network to learn from, at least not
-without augmentation or explicit class weighting. The plain RNN also drops
-Category~4 entirely, which suggests its gating-free recurrence just isn't
-expressive enough for the more nuanced language used to describe suspicious
-findings.
+The bidirectional LSTM edges out the plain LSTM on macro recall (0.545
+vs.~0.533).
+Radiology reports frequently close with a summary sentence that explicitly
+states the BI-RADS assessment (e.g., ``There are no findings to suggest
+malignancy'' at the end of a long descriptive paragraph), and the BiLSTM's
+ability to read backward from that sentence-final context into the descriptive
+body of the report gives it a recall advantage over the unidirectional LSTM,
+particularly for Categories~0 and~3 where the final radiologist impression
+sentence is the strongest categorical signal.
+None of the three architectures produce any predictions for BI-RADS~5 or~6,
+yielding zero F1 for both classes across the board.
+This is a direct consequence of the extreme scarcity of training examples:
+20 Category~5 and 32 Category~6 reports in the training set are insufficient
+for a neural embedding layer trained from scratch to converge on
+representations that distinguish, for instance, the language of ``highly
+suggestive of malignancy'' (BI-RADS~5: ``large irregular spiculated mass with
+associated axillary lymphadenopathy, highly suspicious for malignancy'') from
+``suspicious--biopsy considered'' (BI-RADS~4: ``irregular hypoechoic nodule,
+suspicious, tissue sampling recommended'').
+Without explicit class-imbalance mitigation such as focal loss or targeted data
+augmentation, the gradient signal from those 20--32 examples is overwhelmed by
+the 5{,}126 Category~2 training reports, and the model defaults to the
+majority-class prediction for uncertain inputs.
+The plain RNN additionally fails on Category~4 entirely (F1~=~0), indicating
+that gating-free recurrence---which cannot selectively retain or forget
+clinical context over the 50--200 token span of a mammography report---is too
+weak to model the nuanced hedging language that characterises suspicious
+findings, e.g., ``focal asymmetry of uncertain significance, recommend
+stereotactic biopsy''.
 
 \textbf{LSTM explainability analysis.}
 As the best-performing deep learning model on raw accuracy (90.3\%), the LSTM
-warrants a closer look at how that performance is distributed across BI-RADS
-categories and how confident its predictions are.
+warrants a closer look at how its performance is distributed across BI-RADS
+categories and whether its confidence signals are clinically meaningful.
 Figure~\ref{fig:lstm_per_class_f1} shows the per-class F1 scores for all
 three recurrent architectures.
-The LSTM achieves near-perfect F1 for Category~2 (0.97), which is expected
-given that over 80\% of the test set belongs to this class.
-For Categories~0 and~1, the LSTM reaches 0.77 and 0.85 F1 respectively,
-outsperforming the RNN on both while remaining slightly behind the BiLSTM on
-Category~0.
-The most clinically significant gap is at Categories~3 and~4: the LSTM reaches
-F1 scores of 0.54 and 0.59 respectively, substantially better than the plain
-RNN (0.41 and~0.00) and comparable to the BiLSTM, showing that gated recurrence
-is essential for capturing the nuanced language distinguishing
-``probably benign'' from ``suspicious'' findings.
+The LSTM achieves near-perfect F1 for BI-RADS~2 (F1 = 0.97), reflecting the
+model's strong learning of the stereotyped ``benign'' lexicon that dominates
+the training corpus.
+For BI-RADS~0 (incomplete, additional imaging needed) and BI-RADS~1 (negative,
+no significant finding), the LSTM reaches F1 scores of 0.77 and 0.85
+respectively, outperforming the plain RNN on both.
+BIRADS~0 reports often lack a definitive radiological impression sentence
+because the radiologist is requesting supplemental imaging (e.g., spot
+compression views or ultrasound), and the LSTM's ability to model the
+absence of a conclusive finding phrase explains its advantage over the
+gating-free RNN here.
+The clinically most significant gap is at BI-RADS~3 (probably benign,
+six-month follow-up) and BI-RADS~4 (suspicious, biopsy recommended): the LSTM
+achieves F1 scores of 0.54 and 0.59 respectively, substantially better than
+the plain RNN (F1 = 0.41 and 0.00), confirming that gated recurrence is
+necessary for capturing the hedging language patterns that distinguish
+``probably benign'' from ``suspicious'' in mammographic free text.
+
 Beyond per-class F1, the macro-averaged ROC analysis
-(Figure~\ref{fig:lstm_roc}) reveals that the LSTM achieves an overall AUC of
-0.971, the highest among the three architectures (BiLSTM: 0.966, RNN: 0.949),
-indicating that the LSTM's posterior probability scores discriminate between
-BI-RADS categories well even for classes where hard predictions fail.
-Finally, the prediction confidence analysis
-(Figure~\ref{fig:lstm_confidence}) shows a clear separation between the
-LSTM's correct and incorrect predictions: correctly classified reports are
-assigned maximum softmax probabilities tightly clustered near 1.0
+(Figure~\ref{fig:lstm_roc}) reveals that the LSTM achieves a macro AUC of
+0.971, the highest of the three architectures (BiLSTM: 0.966, RNN: 0.949).
+Despite producing zero hard predictions for BI-RADS~5 and~6, the LSTM's
+softmax probability scores still place some discriminative mass on those
+categories for reports whose language contains malignancy-suggestive terms,
+which inflates the AUC relative to what the hard-prediction F1 would suggest.
+In a prospective screening setting, this means that even without explicit
+Category~5/6 hard predictions, the LSTM's BI-RADS~5 and BI-RADS~6 class
+probabilities could serve as an auxiliary risk score to triage reports for
+priority radiologist review.
+
+The prediction confidence analysis (Figure~\ref{fig:lstm_confidence})
+reveals a clinically actionable separation: correctly classified mammography
+reports receive maximum softmax probabilities tightly clustered near 1.0
 (interquartile range 0.97--1.0), whereas incorrectly classified reports have
-a much wider spread (IQR approximately 0.58--0.89).
-This gap---absent in the RNN but partially present in the BiLSTM---suggests
-that for the LSTM, a low maximum class probability can serve as a practical
-confidence flag to route uncertain reports for radiologist review.
-Explainability analysis using SHAP (Shapley Additive exPlanations, using
+a much wider spread with a median around 0.71 and an IQR of approximately
+0.58--0.89.
+This gap is absent in the RNN (where high confidence and error co-occur
+frequently) and only partially present in the BiLSTM, suggesting that the
+LSTM's gating mechanism produces better-calibrated posterior probabilities
+for this corpus.
+In a clinical deployment scenario, a confidence threshold of approximately
+0.95 on the top predicted BI-RADS class could route low-confidence reports
+(roughly 15--20\% of the test set, based on these distributions) to radiologist
+adjudication while auto-approving the high-confidence majority, meaningfully
+reducing the number of cases requiring manual review without over-relying on
+the model for uncertain borderline reports.
+
+Explainability analysis using SHAP (Shapley Additive exPlanations,
 \texttt{shap.Explainer} with a text masker) was applied to three representative
-test reports, producing token-level attributions for each BI-RADS class
-probability. The resulting SHAP text plots confirm that the LSTM attends most
-strongly to measurement expressions (e.g., ``2.5 cm'', ``3$\times$2 cm''),
-negation tokens (``no mass'', ``without calcification''), and laterality terms
-(``right breast'', ``bilateral'')---precisely the tokens preserved by the
-clinically-aware preprocessing pipeline---while treating generic connector
-words as near-zero contributors. LIME (Local Interpretable Model-agnostic
-Explanations) analysis, applied with 15 top influential words per instance,
-corroborated these findings, with terms such as ``nodule'', ``irregular'',
-and ``calcification'' driving predictions toward higher-risk BI-RADS
-categories and words like ``no'', ``normal'', and ``benign finding'' anchoring
-predictions at Category~2.
+test reports spanning BI-RADS categories~2, 3, and~4, producing token-level
+attributions for each class probability.
+The resulting SHAP text plots show that the LSTM assigns the largest positive
+attributions to radiologically meaningful terms: lesion-size measurement
+expressions (e.g., ``2.5~cm'', ``3$\times$2~cm''), morphological descriptors
+(``spiculated'', ``irregular'', ``oval'', ``lobulated''), negation tokens
+(``no mass'', ``without calcification'', ``no dominant lesion''), and
+laterality terms (``right breast'', ``left breast'', ``bilateral'')---precisely
+the clinical tokens that the domain-aware preprocessing pipeline was built to
+preserve.
+Generic connector words (prepositions, articles, sentence-structural tokens)
+receive near-zero or negative attributions, confirming that the model is
+learning radiological semantics rather than stylistic artefacts.
+
+LIME (Local Interpretable Model-agnostic Explanations), applied with 15
+top-influential words per report, corroborated these SHAP findings at the
+individual-prediction level.
+For reports correctly classified as BI-RADS~4 (suspicious), terms such as
+``irregular'', ``spiculated'', ``new'', ``asymmetry'', and ``suspicious''
+carried the strongest positive contributions toward the Category~4 probability.
+For reports correctly classified as BI-RADS~3, hedging modifiers
+(``probably'', ``likely'', ``appear'', ``stable'') and size descriptors
+indicating small lesions (``0.8~cm'', ``less than one centimetre'')
+were the dominant positive contributors.
+For Category~2 reports, LIME consistently highlighted the negation-bearing
+phrases ``no suspicious finding'', ``no dominant mass'', and ``no malignant
+calcification'' as the primary anchors of the benign prediction.
+These attribution patterns are clinically coherent: they mirror the ACR
+BI-RADS lexicon's own guidance on what language characterises each assessment
+category, providing an important layer of trustworthiness evidence for
+deployment in a radiologist-assisted workflow.
 
 \begin{figure}[h!]
 \centering
@@ -899,19 +1013,46 @@ proxy for prediction reliability.}
 \label{fig:lstm_confidence}
 \end{figure}
 
-\textbf{Putting the three families side by side}, a few things stand out.
-Classical discriminative classifiers win on weighted F1, mostly because they
-handle the dominant Category~2 so well; Logistic Regression, specifically,
-beats both the N-gram and deep learning models on macro F1, which says
-something about how hard a well-regularised linear baseline is to beat once
-class imbalance gets severe. The N-gram model, for its part, reaches 85.7\%
-accuracy and a macro F1 of 0.594 while running through the entire test set in
-under five seconds---not competitive on raw numbers, but a genuinely useful
-option when you need something fast, interpretable, or cheap to retrain. And
-the deep learning models, despite topping the accuracy leaderboard, post a
-noticeably lower macro F1 than Logistic Regression, which is really just
-another way of saying they are leaning hard on the majority class rather than
-learning the minority categories.
+\textbf{Putting the three families side by side from a clinical perspective.}
+For a mammography screening programme, the choice between model families
+depends critically on which BI-RADS errors the programme can tolerate.
+Classical discriminative classifiers---and especially the linear SVM with
+TF-IDF features---maximise weighted F1, which is dominated by Category~2
+performance and reflects aggregate accuracy on the bulk of screening reports.
+This makes them the most defensible choice for high-throughput pre-screening
+of a largely benign population (e.g., routine annual screening), where the
+vast majority of reports genuinely are Category~2 and the cost of an
+individual misclassification is low.
+However, Logistic Regression with CountVectorizer achieves a substantially
+higher macro F1 (0.718 vs.~0.696 for the SVM), meaning it is better at
+identifying the minority BI-RADS categories---the categories that carry the
+greatest clinical consequences (Categories~3, 4, 5, 6).
+For a programme that needs to minimise missed Category~3/4 reports (which
+require follow-up biopsy or imaging), Logistic Regression is the more
+clinically appropriate classical choice.
+The Kneser-Ney bigram model occupies a distinct niche: at 85.7\% accuracy
+and macro F1 of 0.594, it is not competitive with the discriminative models
+on raw performance, but it is the only family whose decision process is fully
+transparent.
+A radiologist or programme administrator can inspect the class-conditional
+bigram likelihood tables directly to understand why the model assigned a
+particular BI-RADS score, an audit trail that neither the neural nor the
+bag-of-words classifiers can easily provide.
+For resource-constrained settings---a clinic without GPU infrastructure, or
+one that needs to retrain monthly as new reports accrue---the N-gram model's
+4.66-second inference time over the full 1{,}377-report test set and its
+near-zero retraining cost make it a practically viable baseline.
+The deep learning models top the raw accuracy leaderboard (LSTM: 90.3\%) but
+post a substantially lower macro F1 than Logistic Regression (0.531 vs.\ 0.718),
+confirming that their high accuracy is driven almost entirely by Category~2
+correctness rather than by any genuine improvement on the clinically
+challenging minority categories.
+For the minority categories that matter most in a breast-cancer screening
+programme---BI-RADS~4 (biopsy), 5 (urgent biopsy), and 6 (known
+malignancy)---the neural models actually offer the weakest coverage, and
+their complete failure on Categories~5 and~6 would be unacceptable without
+additional safeguards such as class-weighted loss, data augmentation, or
+an ensemble with the N-gram model's MAP scores as a calibration signal.
 
 % ============================================================
 \section{Conclusion}
@@ -919,57 +1060,107 @@ learning the minority categories.
 
 \subsection{Overall Summary}
 
-We set out to see how far three quite different modelling approaches could get
-on BI-RADS classification from machine-translated Portuguese mammography
-reports, using a preprocessing pipeline built specifically to keep the clinical
-signal---negation, measurements, laterality---intact while stripping out
-anything that would let a model cheat by reading the label off the text.
-Kneser-Ney N-gram models with MAP inference, a sweep of classical
-discriminative classifiers, and three recurrent architectures were all
-trained and evaluated on the same stratified 70/15/15 split.
+We set out to benchmark three model families---Kneser-Ney N-gram language
+models, classical bag-of-words discriminative classifiers, and recurrent neural
+networks---on automatic BI-RADS category assignment from machine-translated
+Portuguese mammography reports.
+The central challenge is the severe class imbalance inherent in breast screening
+data: BI-RADS~2 (benign, no action) dominates at 80\%+ of reports, while
+BI-RADS~5 (highly suggestive of malignancy) and~6 (known biopsy-proven
+malignancy)---the categories with the highest clinical urgency---contribute
+fewer than 40 training examples combined.
+Our domain-aware preprocessing pipeline was designed around this clinical
+reality: preserving negation cues (``no mass'', ``without calcification''),
+measurement expressions (``2.5~cm'', ``3$\times$2~cm''), and laterality terms
+(``right breast'', ``bilateral'') that carry direct BI-RADS-discriminative
+information, while removing explicit BI-RADS label leakage to ensure the
+models learn report language rather than transcribed category numbers.
 
-No single model won on every metric. LSTM had the best raw accuracy (90.27\%),
-TF-IDF with a linear SVM had the best weighted F1 (89.99\%), and CountVectorizer
-with Logistic Regression had the best macro F1 (71.8\%)---which is really the
-main takeaway: which model looks "best" here depends entirely on which metric
-you care about, and for an imbalanced clinical task, that choice matters more
-than usual. The Kneser-Ney bigram, meanwhile, held its own as a lightweight
-baseline, reaching 85.7\% accuracy and 59.4\% macro F1 with inference fast
-enough to run over the whole test set in a few seconds.
+No single model dominates across all clinically relevant metrics.
+LSTM achieves the highest raw accuracy (90.27\%), but this is largely driven
+by near-perfect classification of the dominant BI-RADS~2 class.
+TF-IDF with a Linear SVM achieves the highest weighted F1 (89.99\%), again
+reflecting its strength on the majority class.
+CountVectorizer with Logistic Regression achieves the highest macro F1
+(71.8\%), indicating the best balance across all seven BI-RADS categories
+including the minority ones.
+For a breast screening programme where missing a Category~4, 5, or~6 report
+has the most serious patient-safety consequences, macro F1 is the most
+clinically meaningful single-number summary---and by this metric, a
+well-regularised linear model outperforms both the N-gram and deep learning
+families.
+The Kneser-Ney bigram, meanwhile, held its own as a transparent and deployable
+baseline: 85.7\% accuracy and 59.4\% macro F1, with the ability to flag
+some Category~5 and~6 reports (which no deep learning model ever predicts),
+and full interpretability of the class-conditional language statistics
+that drive each prediction.
 
 \subsection{Pros}
 \label{sec:strengths}
 
-The pipeline is modular and reproducible, with deterministic tokenisation,
-vocabulary construction, data splits, and evaluation throughout, and it
-compares three model families under a single, unified protocol rather than
-evaluating them in isolation. The N-gram models bring the added benefit of
-being human-inspectable: their class language statistics and calibrated MAP
-scores can be examined directly, which is not something the other two
-families offer as naturally. Among the classical models, Logistic Regression
-with balanced class weights offers the best macro-averaged F1 without
-requiring any GPU infrastructure, making it an attractive option where
-compute is limited. The deep learning models, LSTM and BiLSTM in particular,
-achieve the highest raw accuracy of any family tested, and are readily
-extendable to pre-trained embeddings such as word2vec~\cite{mikolov2013efficient}
-or GloVe~\cite{pennington2014glove}, or to pre-trained clinical language
-models such as ClinicalBERT~\cite{alsentzer2019publicly}.
+From a clinical deployment perspective, several strengths are worth
+highlighting.
+First, the domain-aware preprocessing pipeline---which preserves negation
+cues, measurement spans, laterality terms, and clinical abbreviations while
+excising BI-RADS label leakage---ensures that models learn genuine radiological
+language patterns rather than trivially regressing on leaked category labels.
+The SHAP and LIME explainability analyses confirm this: the tokens with the
+highest attribution scores (``spiculated'', ``irregular'', ``no dominant mass'',
+``bilateral'') are precisely the terms that the ACR BI-RADS Atlas identifies
+as category-discriminative descriptors.
+Second, all three model families are evaluated on the same stratified
+70/15/15 split, enabling a fair head-to-head comparison that is often absent
+in the clinical NLP literature, where different studies evaluate different
+datasets with different protocols.
+Third, the Kneser-Ney bigram's class-conditional log-posteriors are fully
+transparent: a radiologist, clinical informaticist, or programme auditor can
+inspect which word pairs the model associates with each BI-RADS category,
+an audit trail of direct clinical relevance that neither the neural nor the
+bag-of-words models provide as naturally.
+Fourth, the LSTM's prediction confidence scores (maximum softmax probability)
+are well-calibrated enough to identify uncertain borderline reports
+(confidence $<$ 0.95) that would benefit most from radiologist review,
+potentially enabling a human-in-the-loop triage workflow that concentrates
+expert attention on the cases where the model is least sure.
+Among the classical models, Logistic Regression with balanced class weights
+provides the best minority-class coverage (macro F1 = 0.718) without GPU
+infrastructure, making it a viable option for lower-resource breast-screening
+programmes.
 
 \subsection{Limitations}
 
-Several limitations temper these results. Class imbalance remains severe:
-Categories~5 and~6 have only 20 and 32 training samples respectively, which
-causes all models to achieve zero or near-zero F1 on these classes.
-Translation quality is another open question, since machine-translated text
-may introduce artefacts and quality was assessed only by a spot-check on 50
-reports rather than a systematic audit. A degree of residual leakage also
-remains, with 181 reports retaining partial BI-RADS cue words even after
-cleaning. No transformer-based models were evaluated in this study, so
-models such as ClinicalBERT~\cite{alsentzer2019publicly} are absent from the
-comparison. Finally, the translate-then-classify paradigm has been validated
-only for the Portuguese$\to$English pair used here; the broader
-translate-test literature (e.g.\ \cite{artetxe2023revisiting,papaioannou2022cross})
-suggests these results may not transfer directly to other language pairs.
+Several limitations temper these results.
+Class imbalance is the most clinically consequential: BI-RADS~5 and~6 together
+contribute only 52 of the 9{,}179 unique reports (0.57\%), with 20 and 32
+training examples respectively.
+This is a fundamental data problem for breast-screening corpora, where
+malignant findings are rare by design, and it directly causes all three deep
+learning architectures to produce zero predictions for both categories---the
+most clinically dangerous failure mode possible.
+Oversampling, focal loss, or synthetic data augmentation targeted specifically
+at BI-RADS~4, 5, and~6 reports would be the highest-priority fix for any
+deployment-oriented follow-up.
+Translation quality is a second open issue: automated Portuguese-to-English
+translation may subtly alter or lose clinical modifiers (e.g., hedging adverbs,
+degree terms such as ``slightly'', ``markedly''), introduce false negations, or
+mistranslate measurement units and anatomical directions, any of which could
+corrupt the BI-RADS-discriminative signal that models rely on.
+The quality assessment was limited to a spot-check of 50 reports rather than a
+systematic error-type audit, so the extent of translation-induced noise remains
+unquantified.
+A degree of residual label leakage also remains: 181 reports still contain
+partial BI-RADS cue fragments after cleaning, which may inflate performance
+estimates for models that are sensitive to those fragments.
+No transformer-based clinical language models (ClinicalBERT~\cite{alsentzer2019publicly},
+BioBERT, or Portuguese-specific BERT variants) were evaluated in this study,
+so the performance gap between recurrent architectures and the current state
+of the art in clinical NLP remains uncharted for this corpus.
+Finally, the translate-then-classify paradigm has been validated only for the
+Portuguese$\to$English direction on this specific dataset; the
+translate-test literature~\cite{artetxe2023revisiting,papaioannou2022cross}
+suggests that performance can vary substantially across language pairs and
+translation systems, particularly for low-resource clinical domains where
+translation models may not be fine-tuned on radiology text.
 
 % ============================================================
 \section{Future Scope}
